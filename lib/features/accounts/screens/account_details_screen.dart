@@ -72,24 +72,6 @@ class AccountDetailsScreen extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(
-                      isPositive ? Icons.trending_up : Icons.trending_down,
-                      color: Colors.white.withAlpha(230),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${isPositive ? '+' : ''}${currencyFormat.format(account.gain)} (${account.gainPercent.toStringAsFixed(2)}%)',
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(230),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

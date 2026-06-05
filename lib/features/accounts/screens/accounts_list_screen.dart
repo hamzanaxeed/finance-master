@@ -77,21 +77,7 @@ class AccountsListScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: [
-                    Icon(
-                      totalGain >= 0 ? Icons.trending_up : Icons.trending_down,
-                      color: Colors.white.withOpacity(0.9),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${totalGain >= 0 ? '+' : ''}${currencyFormat.format(totalGain)} (${totalGain >= 0 ? '+' : ''}${gainPercent.toStringAsFixed(2)}%)',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+
                 ),
               ],
             ),
@@ -192,13 +178,6 @@ class _AccountCard extends StatelessWidget {
                   Text(
                     currencyFormat.format(account.currentBalance),
                     style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    '${isPositive ? '+' : ''}${currencyFormat.format(account.gain)}',
-                    style: TextStyle(
-                      color: isPositive ? Colors.green : Colors.red,
-                      fontSize: 12,
-                    ),
                   ),
                 ],
               ),
