@@ -20,7 +20,6 @@ class AnalyticsScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Row(
-            
             children: [
               Expanded(
                 child: Card(

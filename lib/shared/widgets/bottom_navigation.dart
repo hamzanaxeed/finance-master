@@ -65,7 +65,6 @@ class BottomNavigation extends StatelessWidget {
       case 1:
         context.go('/accounts');
         break;
-
       case 2:
         context.go('/portfolio');
         break;

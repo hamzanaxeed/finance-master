@@ -103,32 +103,36 @@ class PortfolioScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final holding = holdings[index];
                       final isPositive = holding.profitLoss >= 0;
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
-                                  Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
-                                  Text(
-                                    '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
-                                    style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
+                      return InkWell(
+                        onTap: () => context.push('/portfolio/holdings/${holding.symbol}'),
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
+                                    Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
+                                    Text(
+                                      '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                      style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -137,24 +141,13 @@ class PortfolioScreen extends ConsumerWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => context.push('/portfolio/holdings'),
-                    icon: const Icon(Icons.list),
-                    label: const Text('Holdings'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => context.push('/portfolio/transactions'),
-                    icon: const Icon(Icons.receipt),
-                    label: const Text('Transactions'),
-                  ),
-                ),
-              ],
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => context.push('/portfolio/transactions'),
+                icon: const Icon(Icons.receipt),
+                label: const Text('Transactions'),
+              ),
             ),
           ),
         ],

@@ -19,6 +19,7 @@ import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
 import '../../shared/widgets/bottom_navigation.dart';
+import '../../features/portfolio/screens/portfolio_holding_detail_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -87,6 +88,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/portfolio/holdings',
         builder: (context, state) => const PortfolioHoldingsScreen(),
+      ),
+      GoRoute(
+        path: '/portfolio/holdings/:symbol',
+        builder: (context, state) {
+          final symbol = state.pathParameters['symbol']!;
+          return HoldingDetailScreen(symbol: symbol);
+        },
       ),
       GoRoute(
         path: '/portfolio/add-transaction',

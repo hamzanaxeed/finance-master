@@ -54,7 +54,6 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                 Expanded(
                   child: _SummaryCard(
                     title: 'Expense',
-
                     value: currencyFormat.format(monthlyExpense),
                     color: Colors.red,
                     icon: Icons.arrow_upward,

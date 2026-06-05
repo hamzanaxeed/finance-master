@@ -9,7 +9,6 @@ class AccountNotifier extends StateNotifier<List<Account>> {
   }
 
   void addAccount(Account account) {
-
     state = [...state, account];
     _saveAccounts();
   }
