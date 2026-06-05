@@ -129,7 +129,6 @@ class PortfolioScreen extends ConsumerWidget {
                                       style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
                                   ],
-
                                 ),
                               ],
                             ),

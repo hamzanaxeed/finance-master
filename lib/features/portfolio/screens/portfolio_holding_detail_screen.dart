@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/models/portfolio.dart';
 
@@ -35,8 +35,6 @@ class HoldingDetailScreen extends ConsumerWidget {
     if (transactions.isNotEmpty) {
       firstTxnDate = transactions.map((t) => t.date).reduce((a, b) => a.isBefore(b) ? a : b);
     }
-
-    final preTxnHistory = firstTxnDate == null ? priceHistory : priceHistory.where((p) => p.time.isBefore(firstTxnDate!)).toList();
 
     final latestPrice = priceHistory.isNotEmpty ? priceHistory.last.price : holding.currentPrice;
     final displayCurrentValue = holding.quantity * latestPrice;
@@ -151,12 +149,6 @@ class HoldingDetailScreen extends ConsumerWidget {
                     height: 200,
                     child: _buildChart(context, priceHistory),
                   ),
-            const SizedBox(height: 12),
-            Text('Pre-transaction chart', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            preTxnHistory.isEmpty
-                ? const Text('No pre-transaction price data')
-                : SizedBox(height: 160, child: _buildChart(context, preTxnHistory)),
             const SizedBox(height: 16),
             Text('Transactions', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
@@ -181,40 +173,80 @@ class HoldingDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildChart(BuildContext context, List<PricePoint> points) {
+    // Using Syncfusion SfCartesianChart with SplineAreaSeries for a modern share chart
+    return ScrollableLineChart(points: points, height: 200);
+  }
+}
+
+class ScrollableLineChart extends StatelessWidget {
+  final List<PricePoint> points;
+  final double height;
+  final int visibleWindow; // number of latest points visible by default
+  const ScrollableLineChart({super.key, required this.points, this.height = 240, this.visibleWindow = 60});
+
+  @override
+  Widget build(BuildContext context) {
     if (points.isEmpty) return const SizedBox.shrink();
+
     final sorted = List<PricePoint>.from(points)..sort((a, b) => a.time.compareTo(b.time));
-    final spots = sorted.map((p) => FlSpot(p.time.millisecondsSinceEpoch.toDouble(), p.price)).toList();
-    final minX = spots.first.x;
-    final maxX = spots.last.x;
-    final minY = spots.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-    final maxY = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
 
-
-    // Ensure non-zero interval for SideTitles
-    double interval = (maxX - minX) / 4.0;
-    if (interval == 0 || interval.isNaN || interval.isInfinite) {
-      interval = 1.0; // fallback when all points share same timestamp
+    // Downsample for performance only if extremely large
+    final int maxPoints = 2000;
+    List<PricePoint> data = sorted;
+    if (sorted.length > maxPoints) {
+      final step = (sorted.length / maxPoints).ceil();
+      data = [for (var i = 0; i < sorted.length; i += step) sorted[i]];
+      if (data.last != sorted.last) data.add(sorted.last);
     }
 
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: true),
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true, interval: interval, getTitlesWidget: (value, meta) {
-              final dt = DateTime.fromMillisecondsSinceEpoch(value.toInt());
-              final text = DateFormat.Md().format(dt);
-              return SideTitleWidget(axisSide: meta.axisSide, child: Text(text, style: const TextStyle(fontSize: 10)));
-            }),
-          ),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
+    // Default visible window (right-aligned)
+    final int n = data.length;
+    final DateTime visibleMin = n > visibleWindow ? data[n - visibleWindow].time : data.first.time;
+    final DateTime visibleMax = data.last.time;
+
+    final zoomPanBehavior = ZoomPanBehavior(
+      enablePanning: true,
+      enablePinching: true,
+      enableDoubleTapZooming: true,
+      zoomMode: ZoomMode.x,
+    );
+
+    final trackballBehavior = TrackballBehavior(enable: true, activationMode: ActivationMode.singleTap, tooltipSettings: const InteractiveTooltip(enable: true));
+
+    // Compute a sensible interval for date labels to avoid overlap while showing dates
+    final int daysSpan = visibleMax.difference(visibleMin).inDays.clamp(1, 365);
+    final int labelCount = 6; // aim for ~6 labels
+    final double rawInterval = daysSpan / labelCount;
+    final int intervalDays = rawInterval < 1 ? 1 : rawInterval.ceil();
+
+    return SizedBox(
+      height: height,
+      child: SfCartesianChart(
+        zoomPanBehavior: zoomPanBehavior,
+        trackballBehavior: trackballBehavior,
+        primaryXAxis: DateTimeAxis(
+          minimum: visibleMin,
+          maximum: visibleMax,
+          dateFormat: DateFormat.Md(),
+          intervalType: DateTimeIntervalType.days,
+          interval: intervalDays.toDouble(),
+          majorGridLines: const MajorGridLines(width: 0.5),
+          edgeLabelPlacement: EdgeLabelPlacement.shift,
+          labelIntersectAction: AxisLabelIntersectAction.hide,
+          labelRotation: 45,
         ),
-        minX: minX,
-        maxX: maxX,
-        minY: minY * 0.95,
-        maxY: maxY * 1.05,
-        lineBarsData: [
-          LineChartBarData(spots: spots, isCurved: true, dotData: FlDotData(show: false), color: Theme.of(context).primaryColor, barWidth: 2),
+        primaryYAxis: NumericAxis(majorGridLines: const MajorGridLines(width: 0.5)),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        series: <CartesianSeries>[
+          LineSeries<PricePoint, DateTime>(
+            dataSource: data,
+            xValueMapper: (p, _) => p.time,
+            yValueMapper: (p, _) => p.price,
+            color: Theme.of(context).primaryColor,
+            width: 2,
+            markerSettings: MarkerSettings(isVisible: true, height: 4, width: 4),
+            name: 'Price',
+          ),
         ],
       ),
     );
