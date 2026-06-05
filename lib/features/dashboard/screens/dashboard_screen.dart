@@ -6,7 +6,6 @@ import '../../../shared/models/transaction.dart' as tmodel;
 
 import '../../../shared/providers/account_provider.dart';
 import '../../../shared/providers/transaction_provider.dart';
-import '../../../shared/providers/loan_provider.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/quick_link_card.dart';
 
@@ -20,8 +19,6 @@ class DashboardScreen extends ConsumerWidget {
     final monthlyExpense = ref.watch(monthlyExpenseProvider);
     final cashflow = monthlyIncome - monthlyExpense;
     final transactions = ref.watch(transactionProvider);
-    final loans = ref.watch(loanProvider);
-    final totalDebt = ref.watch(totalDebtProvider);
 
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 0);
 
@@ -82,57 +79,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // Debt Alert
-            if (totalDebt > 0)
-              Card(
-                color: Colors.orange.shade50,
-                child: InkWell(
-                  onTap: () => context.push('/loans'),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade100,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.credit_card,
-                            color: Colors.orange,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Total Debt',
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '${currencyFormat.format(totalDebt)} outstanding',
-                                style: TextStyle(
-                                  color: Colors.orange.shade700,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
             const SizedBox(height: 16),
 
             // Recent Transactions
@@ -208,12 +154,6 @@ class DashboardScreen extends ConsumerWidget {
                   icon: Icons.swap_horiz,
                   count: '${transactions.length} total',
                   onTap: () => context.push('/transactions'),
-                ),
-                QuickLinkCard(
-                  title: 'Loans',
-                  icon: Icons.credit_card,
-                  count: '${loans.length} active',
-                  onTap: () => context.push('/loans'),
                 ),
                 QuickLinkCard(
                   title: 'Analytics',

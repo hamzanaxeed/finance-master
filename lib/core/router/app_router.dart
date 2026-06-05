@@ -8,8 +8,6 @@ import '../../features/accounts/screens/account_details_screen.dart';
 import '../../features/transactions/screens/transactions_list_screen.dart';
 import '../../features/transactions/screens/add_transaction_screen.dart';
 import '../../features/transactions/screens/transaction_details_screen.dart';
-import '../../features/liabilities/screens/loans_list_screen.dart';
-import '../../features/liabilities/screens/loan_details_screen.dart';
 import '../../features/portfolio/screens/portfolio_screen.dart';
 import '../../features/portfolio/screens/portfolio_holdings_screen.dart';
 import '../../features/portfolio/screens/add_stock_transaction_screen.dart';
@@ -84,17 +82,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return TransactionDetailsScreen(transactionId: id);
-        },
-      ),
-      GoRoute(
-        path: '/loans',
-        builder: (context, state) => const LoansListScreen(),
-      ),
-      GoRoute(
-        path: '/loans/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return LoanDetailsScreen(loanId: id);
         },
       ),
       GoRoute(

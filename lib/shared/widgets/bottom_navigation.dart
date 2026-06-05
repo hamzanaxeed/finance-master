@@ -52,7 +52,6 @@ class BottomNavigation extends StatelessWidget {
     if (location.startsWith('/reports')) return 3;
     if (location.startsWith('/more') ||
         location.startsWith('/transactions') ||
-        location.startsWith('/loans') ||
         location.startsWith('/analytics') ||
         location.startsWith('/activity')) return 4;
     return 0;
@@ -66,6 +65,7 @@ class BottomNavigation extends StatelessWidget {
       case 1:
         context.go('/accounts');
         break;
+
       case 2:
         context.go('/portfolio');
         break;

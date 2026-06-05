@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../shared/providers/account_provider.dart';
-import '../../../shared/providers/loan_provider.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -10,10 +9,10 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final totalAssets = ref.watch(totalAssetsProvider);
-    final totalDebt = ref.watch(totalDebtProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 0);
 
-    final netWorth = totalAssets - totalDebt;
+    // Loans removed — net worth equals total assets
+    final netWorth = totalAssets;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Analytics Center')),
@@ -21,6 +20,7 @@ class AnalyticsScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Row(
+            
             children: [
               Expanded(
                 child: Card(
