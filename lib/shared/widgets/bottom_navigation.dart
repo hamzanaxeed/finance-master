@@ -52,7 +52,6 @@ class BottomNavigation extends StatelessWidget {
     if (location.startsWith('/reports')) return 3;
     if (location.startsWith('/more') ||
         location.startsWith('/transactions') ||
-        location.startsWith('/budgets') ||
         location.startsWith('/loans') ||
         location.startsWith('/analytics') ||
         location.startsWith('/activity')) return 4;

@@ -6,7 +6,6 @@ import '../../../shared/models/transaction.dart' as tmodel;
 
 import '../../../shared/providers/account_provider.dart';
 import '../../../shared/providers/transaction_provider.dart';
-import '../../../shared/providers/budget_provider.dart';
 import '../../../shared/providers/loan_provider.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/quick_link_card.dart';
@@ -21,7 +20,6 @@ class DashboardScreen extends ConsumerWidget {
     final monthlyExpense = ref.watch(monthlyExpenseProvider);
     final cashflow = monthlyIncome - monthlyExpense;
     final transactions = ref.watch(transactionProvider);
-    final budgets = ref.watch(budgetProvider);
     final loans = ref.watch(loanProvider);
     final totalDebt = ref.watch(totalDebtProvider);
 
@@ -210,12 +208,6 @@ class DashboardScreen extends ConsumerWidget {
                   icon: Icons.swap_horiz,
                   count: '${transactions.length} total',
                   onTap: () => context.push('/transactions'),
-                ),
-                QuickLinkCard(
-                  title: 'Budgets',
-                  icon: Icons.pie_chart,
-                  count: '${budgets.length} active',
-                  onTap: () => context.push('/budgets'),
                 ),
                 QuickLinkCard(
                   title: 'Loans',

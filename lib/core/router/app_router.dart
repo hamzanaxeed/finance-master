@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
@@ -9,8 +8,6 @@ import '../../features/accounts/screens/account_details_screen.dart';
 import '../../features/transactions/screens/transactions_list_screen.dart';
 import '../../features/transactions/screens/add_transaction_screen.dart';
 import '../../features/transactions/screens/transaction_details_screen.dart';
-import '../../features/budgets/screens/budgets_list_screen.dart';
-import '../../features/budgets/screens/budget_details_screen.dart';
 import '../../features/liabilities/screens/loans_list_screen.dart';
 import '../../features/liabilities/screens/loan_details_screen.dart';
 import '../../features/portfolio/screens/portfolio_screen.dart';
@@ -87,17 +84,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return TransactionDetailsScreen(transactionId: id);
-        },
-      ),
-      GoRoute(
-        path: '/budgets',
-        builder: (context, state) => const BudgetsListScreen(),
-      ),
-      GoRoute(
-        path: '/budgets/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return BudgetDetailsScreen(budgetId: id);
         },
       ),
       GoRoute(
