@@ -129,13 +129,15 @@ final corporateActionProvider =
 
 final holdingsProvider = Provider<List<StockHolding>>((ref) {
   final transactions = ref.watch(stockTransactionProvider);
+  final priceHistoryMap = ref.watch(priceHistoryProvider);
+  final holdingMeta = ref.watch(holdingMetaProvider);
   final Map<String, _HoldingData> holdings = {};
 
   for (final txn in transactions) {
     if (!holdings.containsKey(txn.symbol)) {
       holdings[txn.symbol] = _HoldingData(
         symbol: txn.symbol,
-        companyName: txn.symbol,
+        companyName: holdingMeta[txn.symbol] ?? txn.symbol,
       );
     }
 
@@ -149,6 +151,18 @@ final holdingsProvider = Provider<List<StockHolding>>((ref) {
       holding.quantity -= txn.quantity;
       holding.totalInvestment -= (txn.quantity * holding.averagePrice);
     }
+  }
+
+  // Consider any price history updates for symbols
+  for (final entry in priceHistoryMap.entries) {
+    final symbol = entry.key;
+    final list = entry.value;
+    if (list.isEmpty) continue;
+    final last = list.last.price;
+    if (!holdings.containsKey(symbol)) {
+      holdings[symbol] = _HoldingData(symbol: symbol, companyName: holdingMeta[symbol] ?? symbol);
+    }
+    holdings[symbol]!.lastPrice = last;
   }
 
   return holdings.values
@@ -182,3 +196,98 @@ class _HoldingData {
   double get averagePrice =>
       quantity > 0 ? totalInvestment / quantity : 0;
 }
+
+// Price history notifier - stores list of PricePoint per symbol and persists
+class PriceHistoryNotifier extends StateNotifier<Map<String, List<PricePoint>>> {
+  PriceHistoryNotifier() : super({}) {
+    _load();
+  }
+
+  static const String _key = 'price_history';
+
+  void addPricePoint(String symbol, PricePoint p) {
+    final newState = Map<String, List<PricePoint>>.from(state);
+    final list = List<PricePoint>.from(newState[symbol] ?? []);
+    list.add(p);
+    newState[symbol] = list;
+    state = newState;
+    _save();
+  }
+
+  void setHistory(String symbol, List<PricePoint> list) {
+    final newState = Map<String, List<PricePoint>>.from(state);
+    newState[symbol] = list;
+    state = newState;
+    _save();
+  }
+
+  List<PricePoint> getHistory(String symbol) => state[symbol] ?? [];
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final map = state.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()));
+    await prefs.setString(_key, jsonEncode(map));
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_key);
+    if (raw == null) return;
+    try {
+      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
+      final result = <String, List<PricePoint>>{};
+      decoded.forEach((k, v) {
+        final List<dynamic> arr = v as List<dynamic>;
+        result[k] = arr.map((e) => PricePoint.fromJson(e as Map<String, dynamic>)).toList();
+      });
+      state = result;
+    } catch (_) {}
+  }
+}
+
+final priceHistoryProvider = StateNotifierProvider<PriceHistoryNotifier, Map<String, List<PricePoint>>>((ref) {
+  return PriceHistoryNotifier();
+});
+
+// Latest price for a given symbol (null if none)
+final latestPriceProvider = Provider.family<double?, String>((ref, symbol) {
+  final map = ref.watch(priceHistoryProvider);
+  final list = map[symbol];
+  if (list == null || list.isEmpty) return null;
+  return list.last.price;
+});
+
+// Holding meta like editable company name
+class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
+  HoldingMetaNotifier() : super({}) {
+    _load();
+  }
+
+  static const String _key = 'holding_meta';
+
+  void updateCompanyName(String symbol, String name) {
+    final newState = Map<String, String>.from(state);
+    newState[symbol] = name;
+    state = newState;
+    _save();
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_key, jsonEncode(state));
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_key);
+    if (raw == null) return;
+    try {
+      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
+      state = decoded.map((k, v) => MapEntry(k, v as String));
+    } catch (_) {}
+  }
+}
+
+final holdingMetaProvider = StateNotifierProvider<HoldingMetaNotifier, Map<String, String>>((ref) {
+  return HoldingMetaNotifier();
+});

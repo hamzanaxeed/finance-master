@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'dart:convert';
 
 enum StockTransactionType {
   buy,
@@ -30,6 +29,25 @@ class StockHolding {
   double get profitLoss => currentValue - totalInvestment;
   double get profitLossPercent =>
       totalInvestment > 0 ? (profitLoss / totalInvestment) * 100 : 0;
+}
+
+class PricePoint {
+  final DateTime time;
+  final double price;
+
+  PricePoint({required this.time, required this.price});
+
+  Map<String, dynamic> toJson() => {
+        'time': time.toIso8601String(),
+        'price': price,
+      };
+
+  factory PricePoint.fromJson(Map<String, dynamic> json) {
+    return PricePoint(
+      time: DateTime.parse(json['time'] as String),
+      price: (json['price'] as num).toDouble(),
+    );
+  }
 }
 
 class StockTransaction {
