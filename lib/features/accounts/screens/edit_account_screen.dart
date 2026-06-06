@@ -107,25 +107,48 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Text('Edit Account'),
+        title: const Text(
+          'Edit Account',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _handleDelete,
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+              tooltip: 'Delete Account',
+              onPressed: _handleDelete,
+            ),
           ),
         ],
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           children: [
+            // Section: Basic Info
+            Text(
+              'Account Details',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Account Name',
-                border: OutlineInputBorder(),
+                hintText: 'e.g., Personal Savings',
+                prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -134,14 +157,17 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+
             DropdownButtonFormField<AccountType>(
-              initialValue: _selectedType,
-              decoration: const InputDecoration(
+              value: _selectedType,
+              decoration: InputDecoration(
                 labelText: 'Account Type',
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.category_outlined),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
-              // Only show allowed types; if the current account has a hidden type include it so the field's value is valid
               items: [
                 ..._visibleAccountTypes,
                 if (_selectedType != null && !_visibleAccountTypes.contains(_selectedType)) _selectedType!,
@@ -155,12 +181,26 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                 setState(() => _selectedType = value);
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+
+            // Section: Preferences
+            Text(
+              'Currency Settings',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+
             DropdownButtonFormField<String>(
-              initialValue: _selectedCurrency,
-              decoration: const InputDecoration(
+              value: _selectedCurrency,
+              decoration: InputDecoration(
                 labelText: 'Currency',
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.payments_outlined),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
               ),
               items: ['PKR', 'USD', 'EUR', 'GBP', 'JPY'].map((currency) {
                 return DropdownMenuItem(
@@ -172,11 +212,17 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                 setState(() => _selectedCurrency = value);
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
+
+            // Action Buttons
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                     onPressed: () => context.pop(),
                     child: const Text('Cancel'),
                   ),
@@ -184,8 +230,12 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                     onPressed: _handleSubmit,
-                    child: const Text('Save Changes'),
+                    child: const Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

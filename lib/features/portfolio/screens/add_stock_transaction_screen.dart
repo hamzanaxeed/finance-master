@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/models/portfolio.dart';
+import 'package:intl/intl.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/providers/portfolio_provider.dart' as _pp show holdingMetaProvider;
 import '../../../shared/providers/portfolio_provider.dart' as pp;
@@ -84,71 +85,134 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Stock Transaction')),
+      appBar: AppBar(
+        title: const Text('Add Stock Transaction'),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20), // Generous modern breathing room
           children: [
+            // 1. Sleek Material 3 Segmented Toggle for Buy/Sell
+            SegmentedButton<StockTransactionType>(
+              segments: [
+                ButtonSegment<StockTransactionType>(
+                  value: StockTransactionType.buy,
+                  label: const Text('BUY'),
+                  icon: Icon(Icons.add_shopping_cart_rounded, size: 18, color: _selectedType == StockTransactionType.buy ? theme.colorScheme.primary : null),
+                ),
+                ButtonSegment<StockTransactionType>(
+                  value: StockTransactionType.sell,
+                  label: const Text('SELL'),
+                  icon: Icon(Icons.sell_outlined, size: 18, color: _selectedType == StockTransactionType.sell ? theme.colorScheme.error : null),
+                ),
+              ],
+              selected: {_selectedType},
+              onSelectionChanged: (newSelection) {
+                setState(() => _selectedType = newSelection.first);
+              },
+              style: SegmentedButton.styleFrom(
+                // Adaptive coloring depending on trade context
+                selectedBackgroundColor: _selectedType == StockTransactionType.buy
+                    ? theme.colorScheme.primaryContainer
+                    : theme.colorScheme.errorContainer,
+                selectedForegroundColor: _selectedType == StockTransactionType.buy
+                    ? theme.colorScheme.onPrimaryContainer
+                    : theme.colorScheme.onErrorContainer,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 2. Asset Core Info (Ticker and Company Name)
+            TextFormField(
+              controller: _symbolController,
+              decoration: const InputDecoration(
+                labelText: 'Stock Symbol',
+                hintText: 'e.g., AAPL, TSLA',
+                prefixIcon: Icon(Icons.analytics_rounded, size: 20),
+              ),
+              textCapitalization: TextCapitalization.characters,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+            ),
+            const SizedBox(height: 16),
+
+            TextFormField(
+              controller: _companyNameController,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Company Name (Optional)',
+                prefixIcon: Icon(Icons.business_rounded, size: 20),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Divider to visually structure transaction specifics
             Row(
               children: [
+                Text('Transaction Details', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold)),
+                const Expanded(child: Divider(indent: 12)),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // 3. Trade Specifics (Quantity & Price per Share)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Expanded(
-                  child: ChoiceChip(
-                    label: const Text('BUY'),
-                    selected: _selectedType == StockTransactionType.buy,
-                    onSelected: (selected) {
-                      if (selected) setState(() => _selectedType = StockTransactionType.buy);
+                  child: TextFormField(
+                    controller: _quantityController,
+                    decoration: const InputDecoration(
+                      labelText: 'Quantity',
+                      prefixIcon: Icon(Icons.pin_rounded, size: 20),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Required';
+                      if (double.tryParse(v) == null || double.parse(v) <= 0) return 'Invalid';
+                      return null;
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: ChoiceChip(
-                    label: const Text('SELL'),
-                    selected: _selectedType == StockTransactionType.sell,
-                    onSelected: (selected) {
-                      if (selected) setState(() => _selectedType = StockTransactionType.sell);
+                  child: TextFormField(
+                    controller: _priceController,
+                    decoration: InputDecoration(
+                      labelText: 'Price / Share',
+                      prefixText: 'Rs ',
+                      prefixStyle: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Required';
+                      if (double.tryParse(v) == null || double.parse(v) <= 0) return 'Invalid';
+                      return null;
                     },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            TextFormField(
-              controller: _companyNameController,
-              decoration: const InputDecoration(labelText: 'Company name (optional)', border: OutlineInputBorder()),
-            ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 16),
-            // Optional company name for the symbol (will be saved to holding meta)
-            TextFormField(
-              controller: _symbolController,
-              decoration: const InputDecoration(labelText: 'Symbol', border: OutlineInputBorder()),
-              textCapitalization: TextCapitalization.characters,
-              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _quantityController,
-              decoration: const InputDecoration(labelText: 'Quantity', border: OutlineInputBorder()),
-              keyboardType: TextInputType.number,
-              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Price per Share', prefixText: 'Rs ', border: OutlineInputBorder()),
-              keyboardType: TextInputType.number,
-              validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-            ),
-            const SizedBox(height: 16),
+            // 4. Commission Fees
             TextFormField(
               controller: _commissionController,
-              decoration: const InputDecoration(labelText: 'Commission', prefixText: 'Rs ', border: OutlineInputBorder()),
-              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Commission Fees',
+                prefixText: 'Rs ',
+                prefixStyle: TextStyle(color: theme.colorScheme.outline),
+                prefixIcon: const Icon(Icons.receipt_long_rounded, size: 20),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 16),
+
+            // 5. Clean, Interactive Date Picker Form Trigger
             InkWell(
               onTap: () async {
                 final date = await showDatePicker(
@@ -159,12 +223,21 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
                 );
                 if (date != null) setState(() => _selectedDate = date);
               },
+              borderRadius: BorderRadius.circular(16),
               child: InputDecorator(
-                decoration: const InputDecoration(labelText: 'Date', border: OutlineInputBorder()),
-                child: Text('${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'),
+                decoration: const InputDecoration(
+                  labelText: 'Transaction Date',
+                  prefixIcon: Icon(Icons.calendar_today_rounded, size: 20),
+                ),
+                child: Text(
+                  DateFormat.yMMMd().format(_selectedDate), // Requires import 'package:intl/intl.dart';
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
+
+            // 6. Sticky Action Buttons Row
             Row(
               children: [
                 Expanded(
@@ -175,9 +248,17 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: FilledButton(
+                  child: ElevatedButton( // Using theme matching elevated buttons
                     onPressed: _handleSubmit,
-                    child: const Text('Add Transaction'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _selectedType == StockTransactionType.buy
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.error,
+                      foregroundColor: _selectedType == StockTransactionType.buy
+                          ? theme.colorScheme.onPrimary
+                          : theme.colorScheme.onError,
+                    ),
+                    child: const Text('Save Order'),
                   ),
                 ),
               ],

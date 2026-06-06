@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/providers/account_provider.dart';
+import '../../../core/theme/app_theme.dart';
 
 class PortfolioScreen extends ConsumerWidget {
   const PortfolioScreen({super.key});
@@ -70,9 +71,13 @@ class PortfolioScreen extends ConsumerWidget {
                   children: [
                     Icon(totalProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: Colors.white, size: 16),
                     const SizedBox(width: 4),
-                    Text(
-                      '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(2)}%)',
-                      style: const TextStyle(color: Colors.white),
+                    Expanded(
+                      child: Text(
+                        '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(2)}%)',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -84,49 +89,32 @@ class PortfolioScreen extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.account_balance_wallet, size: 20),
-                          const SizedBox(height: 4),
-                          const Text('Cash', style: TextStyle(fontSize: 12)),
-                          Text(currencyFormat.format(cashAvailable), style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
+                  child: _summaryCard(
+                    context,
+                    title: 'Cash',
+                    value: currencyFormat.format(cashAvailable),
+                    icon: Icons.account_balance_wallet_rounded,
+                    iconColor: Colors.blue,
                   ),
                 ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.attach_money, size: 20),
-                          const SizedBox(height: 4),
-                          const Text('Invested', style: TextStyle(fontSize: 12)),
-                          // Show net invested (transfers in - transfers out)
-                          Text(currencyFormat.format(invested), style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
+                  child: _summaryCard(
+                    context,
+                    title: 'Invested',
+                    value: currencyFormat.format(invested),
+                    icon: Icons.trending_up_rounded,
+                    iconColor: Colors.green,
                   ),
                 ),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.show_chart, size: 20),
-                          const SizedBox(height: 4),
-                          const Text('Holdings', style: TextStyle(fontSize: 12)),
-                          Text(currencyFormat.format(holdingsValue), style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
+                  child: _summaryCard(
+                    context,
+                    title: 'Holdings',
+                    value: currencyFormat.format(holdingsValue),
+                    icon: Icons.pie_chart_rounded,
+                    iconColor: Colors.orange,
                   ),
                 ),
               ],
@@ -137,7 +125,8 @@ class PortfolioScreen extends ConsumerWidget {
             child: holdings.isEmpty
                 ? const Center(child: Text('No holdings'))
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    // add bottom padding so the FAB doesn't cover the last item
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
                     itemCount: holdings.length,
                     itemBuilder: (context, index) {
                       final holding = holdings[index];
@@ -200,94 +189,169 @@ class PortfolioScreen extends ConsumerWidget {
         final _noteCtrl = TextEditingController();
 
         return AlertDialog(
-          title: const Text('Transfer funds'),
-          content: StatefulBuilder(builder: (context, setState) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
+          title: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.swap_horiz_rounded, color: Theme.of(context).colorScheme.primary, size: 28),
+            title: Text(
+              'Transfer Funds',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            dense: true,
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0), // Optimal spacing for modern dialogs
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              final portfolioCash = ref.watch(portfolioCashProvider);
+
+              // Look up selected account safely to check its dynamic balance
+              final selectedAccount = selectedAccountId != null
+                  ? ref.read(accountProvider.notifier).getAccountById(selectedAccountId!)
+                  : null;
+
+              return Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: ChoiceChip(
-                          label: const Text('From account → Portfolio'),
-                          selected: toPortfolio,
-                          onSelected: (v) => setState(() => toPortfolio = true),
+                      // Modern Material 3 Toggle Segment
+                      SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment<bool>(
+                            value: true,
+                            label: Text('To Portfolio'),
+                            icon: Icon(Icons.arrow_downward_rounded, size: 18),
+                          ),
+                          ButtonSegment<bool>(
+                            value: false,
+                            label: Text('To Account'),
+                            icon: Icon(Icons.arrow_upward_rounded, size: 18),
+                          ),
+                        ],
+                        selected: {toPortfolio},
+                        onSelectionChanged: (newSelection) {
+                          setState(() => toPortfolio = newSelection.first);
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Account Selector Dropdown
+                      if (accounts.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            'No accounts available. Create an account first.',
+                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                          ),
+                        )
+                      else
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: selectedAccountId,
+                          items: accounts.map((a) {
+                            return DropdownMenuItem(
+                              value: a.id,
+                              child: Text(
+                                '${a.name} (Rs ${a.currentBalance.toStringAsFixed(0)})',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (v) => setState(() => selectedAccountId = v),
+                          decoration: const InputDecoration(
+                            labelText: 'Select Account',
+                            prefixIcon: Icon(Icons.account_balance_rounded, size: 20),
+                          ),
+                          validator: (v) => v == null ? 'Please select an account' : null,
+                        ),
+                      const SizedBox(height: 16),
+
+                      // Amount Input Field with Smart, Real-Time In-line Validation
+                      TextFormField(
+                        controller: _amountCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Amount',
+                          prefixText: 'Rs ',
+                          prefixStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Required';
+                          final amount = double.tryParse(v);
+                          if (amount == null || amount <= 0) return 'Enter valid amount';
+
+                          if (toPortfolio) {
+                            if (selectedAccount == null) return 'Select an account first';
+                            if (selectedAccount.currentBalance < amount) {
+                              return 'Insufficient balance (Available: Rs ${selectedAccount.currentBalance.toStringAsFixed(0)})';
+                            }
+                          } else {
+                            if (portfolioCash < amount) {
+                              return 'Insufficient cash (Available: Rs ${portfolioCash.toStringAsFixed(0)})';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Optional Transaction Note Field
+                      TextFormField(
+                        controller: _noteCtrl,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: const InputDecoration(
+                          labelText: 'Note (Optional)',
+                          prefixIcon: Icon(Icons.notes_rounded, size: 20),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ChoiceChip(
-                          label: const Text('Portfolio → Account'),
-                          selected: !toPortfolio,
-                          onSelected: (v) => setState(() => toPortfolio = false),
-                        ),
-                      ),
+                      const SizedBox(height: 8),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  if (accounts.isEmpty) const Text('No accounts available. Create an account first.'),
-                  if (accounts.isNotEmpty)
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedAccountId,
-                      items: accounts.map((a) => DropdownMenuItem(value: a.id, child: Text(a.name))).toList(),
-                      onChanged: (v) => setState(() => selectedAccountId = v),
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                    ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _amountCtrl,
-                    decoration: const InputDecoration(labelText: 'Amount', prefixText: 'Rs ', border: OutlineInputBorder()),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return 'Required';
-                      final a = double.tryParse(v);
-                      if (a == null || a <= 0) return 'Enter valid amount';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(controller: _noteCtrl, decoration: const InputDecoration(labelText: 'Note', border: OutlineInputBorder())),
-                ],
-              ),
-            );
-          }),
+                ),
+              );
+            },
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
             ElevatedButton(
               onPressed: () async {
-                if (!_formKey.currentState!.validate()) return;
+                // Form states handle all balance validations cleanly right here
+                if (!_formKey.currentState!.validate() || selectedAccountId == null) return;
+
                 final amount = double.parse(_amountCtrl.text);
-                if (selectedAccountId == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select an account')));
-                  return;
-                }
+                final memo = _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim();
 
-                final portfolioCash = ref.read(portfolioCashProvider);
-
-                if (toPortfolio) {
-                  // Check account balance
-                  final acc = ref.read(accountProvider.notifier).getAccountById(selectedAccountId!);
-                  if (acc == null || acc.currentBalance < amount) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Insufficient account balance')));
-                    return;
-                  }
-                  await ref.read(portfolioTransferProvider.notifier).transferFromAccountToPortfolio(selectedAccountId!, amount, note: _noteCtrl.text.isEmpty ? null : _noteCtrl.text);
-                } else {
-                  // portfolio -> account
-                  if (portfolioCash < amount) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Insufficient portfolio cash')));
-                    return;
-                  }
-                  await ref.read(portfolioTransferProvider.notifier).transferFromPortfolioToAccount(selectedAccountId!, amount, note: _noteCtrl.text.isEmpty ? null : _noteCtrl.text);
-                }
-
-
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transfer completed')));
+                // Close form dialog upfront to make the app feel quick and responsive
                 Navigator.pop(context);
+
+                try {
+                  if (toPortfolio) {
+                    await ref.read(portfolioTransferProvider.notifier).transferFromAccountToPortfolio(selectedAccountId!, amount, note: memo);
+                  } else {
+                    await ref.read(portfolioTransferProvider.notifier).transferFromPortfolioToAccount(selectedAccountId!, amount, note: memo);
+                  }
+
+                  // Use your custom success snackbar token from your theme config file
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    AppTheme.successSnackBar(context, 'Transfer completed successfully!'),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    AppTheme.errorSnackBar(context, 'Transfer failed. Please try again.'),
+                  );
+                }
               },
-              child: const Text('Transfer'),
+              child: const Text('Confirm Transfer'),
             ),
           ],
         );
@@ -303,69 +367,207 @@ class PortfolioScreen extends ConsumerWidget {
         final _formKey = GlobalKey<FormState>();
         final _amountCtrl = TextEditingController();
 
-        return AlertDialog(
-          title: const Text('Manage portfolio cash'),
-          content: StatefulBuilder(builder: (context, setState) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ChoiceChip(
-                          label: const Text('Add cash'),
-                          selected: add,
-                          onSelected: (v) => setState(() => add = true),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ChoiceChip(
-                          label: const Text('Remove cash'),
-                          selected: !add,
-                          onSelected: (v) => setState(() => add = false),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _amountCtrl,
-                    decoration: const InputDecoration(labelText: 'Amount', prefixText: 'Rs ', border: OutlineInputBorder()),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return 'Required';
-                      final a = double.tryParse(v);
-                      if (a == null || a <= 0) return 'Enter valid amount';
-                      return null;
-                    },
+                  const Icon(Icons.account_balance_wallet_outlined, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Manage Portfolio Cash',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
                   ),
                 ],
               ),
+              content: ConstrainedBox(
+                // Keeps the dialog tight but allows room for error text validation animations
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Premium Material 3 Toggle
+                      SegmentedButton<bool>(
+                        segments: const <ButtonSegment<bool>>[
+                          ButtonSegment<bool>(
+                            value: true,
+                            label: Text('Add Cash'),
+                            icon: Icon(Icons.add_circle_outline, size: 18),
+                          ),
+                          ButtonSegment<bool>(
+                            value: false,
+                            label: Text('Remove Cash'),
+                            icon: Icon(Icons.remove_circle_outline, size: 18),
+                          ),
+                        ],
+                        selected: {add},
+                        onSelectionChanged: (Set<bool> newSelection) {
+                          setState(() => add = newSelection.first);
+                        },
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Cleaned up Input Box
+                      TextFormField(
+                        controller: _amountCtrl,
+                        autofocus: true, // Instantly opens keyboard for seamless user flow
+                        decoration: InputDecoration(
+                          labelText: 'Amount',
+                          prefixText: 'Rs. ',
+                          prefixStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          filled: true,
+                          // Use Material 3 recommended surface color
+                          fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Please enter an amount';
+                          final a = double.tryParse(v);
+                          if (a == null || a <= 0) return 'Enter a valid positive amount';
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actionsPadding: const EdgeInsets.only(right: 16, bottom: 16, left: 16),
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ),
+                ),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+                    final amount = double.parse(_amountCtrl.text);
+                    final actions = ref.read(portfolioCashActionsProvider);
+
+                    // Capture the state variable locally before closing the context safely
+                    final isDepositing = add;
+
+                    if (isDepositing) {
+                      actions.deposit(amount);
+                    } else {
+                      actions.withdraw(amount);
+                    }
+
+                    Navigator.pop(context);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Text(isDepositing ? '💸 Cash added successfully' : '💰 Cash removed successfully'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: const Text('Confirm', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
             );
-          }),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (!(_formKey.currentState?.validate() ?? false)) return;
-                final amount = double.parse(_amountCtrl.text);
-                final actions = ref.read(portfolioCashActionsProvider);
-                if (add) {
-                  actions.deposit(amount);
-                } else {
-                  actions.withdraw(amount);
-                }
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(add ? 'Cash added' : 'Cash removed')));
-                Navigator.pop(context);
-              },
-              child: const Text('Apply'),
-            ),
-          ],
+          },
         );
       },
     );
   }
+}
+Widget _summaryCard(
+    BuildContext context, {
+      required String title,
+      required String value,
+      required IconData icon,
+      required Color iconColor,
+    }) {
+  return Container(
+    height: 130,
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(
+        color: Theme.of(context)
+            .colorScheme
+            .outlineVariant
+            .withAlpha(80),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(10),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: iconColor.withAlpha(25),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: 22,
+          ),
+        ),
+
+        const Spacer(),
+
+        Text(
+          title,
+          style: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant,
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

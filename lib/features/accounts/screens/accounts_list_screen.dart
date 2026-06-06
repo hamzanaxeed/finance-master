@@ -27,10 +27,6 @@ class AccountsListScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Accounts'),
-            Text(
-              'Manage your financial accounts',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
           ],
         ),
         actions: [
