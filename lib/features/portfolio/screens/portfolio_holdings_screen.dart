@@ -25,7 +25,6 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
               itemBuilder: (context, index) {
                 if (index == holdings.length) return SizedBox(height: footerHeight);
                 final holding = holdings[index];
-
                 final isPositive = holding.profitLoss >= 0;
                 return Card(
                   margin: const EdgeInsets.only(bottom: AppSpacing.gap),

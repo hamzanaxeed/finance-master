@@ -115,7 +115,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/activity',
         builder: (context, state) => const ActivityTimelineScreen(),
       ),
-
     ],
   );
 });

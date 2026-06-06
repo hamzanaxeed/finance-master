@@ -168,3 +168,4 @@ final monthlyExpenseProvider = Provider<double>((ref) {
       })
       .fold(0.0, (sum, txn) => sum + txn.amount);
 });
+

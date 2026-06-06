@@ -18,7 +18,15 @@ class AnalyticsScreen extends ConsumerStatefulWidget {
 
 class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
   String? _selectedAccountId; // null = all accounts
-  int? _selectedMonthIndex; // selected month pill index
+  DateTime? _selectedMonth; // currently selected month (first day)
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    // default to current month (first day)
+    _selectedMonth = DateTime(now.year, now.month, 1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,78 +254,23 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Header shows selected month (or prompt)
                   Text(
-                    _selectedMonthIndex == null
+                    _selectedMonth == null
                         ? 'Select a month to view transactions'
-                        : 'Transactions for ${DateFormat.yMMMM().format(DateTime(now.year, now.month - (11 - _selectedMonthIndex!), 1))}',
+                        : 'Transactions for ${DateFormat.yMMMM().format(_selectedMonth!)}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 12),
 
-                  // Horizontal month selector
-                  SizedBox(
-                    height: 48,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      itemCount: months.length,
-                      itemBuilder: (context, idx) {
-                        final m = months[idx];
-                        final selected = _selectedMonthIndex == idx;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(20),
-                            onTap: () => setState(() => _selectedMonthIndex = idx),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 180),
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor),
-                                boxShadow: selected
-                                    ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withAlpha((0.16 * 255).round()), blurRadius: 6, offset: const Offset(0, 2))]
-                                    : null,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    m.month,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: selected
-                                          ? Theme.of(context).colorScheme.primary
-                                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  AnimatedContainer(
-                                    duration: const Duration(milliseconds: 250),
-                                    width: selected ? 24 : 0,
-                                    height: 3,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-    ),
-                          );
-
-                      },
-                    ),
-                  ),
-
+                  // Modern month selector widget (chevrons + picker)
+                  _monthSelector(),
                   const SizedBox(height: 12),
 
                   // Inline transaction list for the selected month
                   Builder(builder: (context) {
-                    if (_selectedMonthIndex == null) return const SizedBox.shrink();
-                    final selectedMonthDate = DateTime(now.year, now.month - (11 - _selectedMonthIndex!), 1);
+                    if (_selectedMonth == null) return const SizedBox.shrink();
+                    final selectedMonthDate = DateTime(_selectedMonth!.year, _selectedMonth!.month, 1);
                     final txnsForSelectedMonth = filteredForChart.where((t) => t.date.year == selectedMonthDate.year && t.date.month == selectedMonthDate.month).toList();
 
                     if (txnsForSelectedMonth.isEmpty) {
@@ -379,6 +332,100 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
         return Icons.arrow_upward;
       case TransactionType.transfer:
         return Icons.swap_horiz;
+    }
+  }
+
+  // Month selector widget (chevrons + central picker)
+  Widget _monthSelector() {
+    final selected = _selectedMonth ?? DateTime.now();
+    // compute whether the right (forward) chevron should be enabled
+    final selectedMonthStart = DateTime(selected.year, selected.month, 1);
+    final currentMonthStart = DateTime(DateTime.now().year, DateTime.now().month, 1);
+    final canMoveNext = selectedMonthStart.isBefore(currentMonthStart);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: () => _changeMonth(-1),
+          ),
+
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: _showMonthPicker,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      DateFormat('MMMM yyyy').format(selected),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.keyboard_arrow_down, size: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            // disable moving forward beyond the current month
+            onPressed: canMoveNext ? () => _changeMonth(1) : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _changeMonth(int delta) {
+    setState(() {
+      final current = _selectedMonth ?? DateTime.now();
+      final tentative = DateTime(current.year, current.month + delta, 1);
+      final currentMonthStart = DateTime(DateTime.now().year, DateTime.now().month, 1);
+      // Prevent selecting a month after the current month. If the tentative
+      // month is in the future, clamp to the current month instead.
+      if (tentative.isAfter(currentMonthStart)) {
+        _selectedMonth = currentMonthStart;
+      } else {
+        _selectedMonth = tentative;
+      }
+    });
+  }
+
+  Future<void> _showMonthPicker() async {
+    final now = DateTime.now();
+
+    final result = await showDialog<DateTime>(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Select Month'),
+          children: List.generate(24, (index) {
+            final month = DateTime(now.year, now.month - index, 1);
+
+            return SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, month);
+              },
+              child: Text(DateFormat('MMMM yyyy').format(month)),
+            );
+          }),
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() => _selectedMonth = DateTime(result.year, result.month, 1));
     }
   }
 }
