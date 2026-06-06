@@ -30,6 +30,11 @@ class _AddAccountScreenState extends ConsumerState<AddAccountScreen> {
     'CHF'
   ];
 
+  // Only show these account types in the Add Account screen. Hide savings, investment and cash.
+  List<AccountType> get _visibleAccountTypes => AccountType.values.where((t) {
+        return t != AccountType.savings && t != AccountType.investment && t != AccountType.cash;
+      }).toList();
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -81,7 +86,7 @@ class _AddAccountScreenState extends ConsumerState<AddAccountScreen> {
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
               childAspectRatio: 1,
-              children: AccountType.values.map((type) {
+              children: _visibleAccountTypes.map((type) {
                 final isSelected = _selectedType == type;
                 return InkWell(
                   onTap: () => setState(() => _selectedType = type),
@@ -99,7 +104,7 @@ class _AddAccountScreenState extends ConsumerState<AddAccountScreen> {
                           ? Theme.of(context)
                               .colorScheme
                               .primary
-                              .withOpacity(0.05)
+                              .withAlpha((0.05 * 255).round())
                           : null,
                     ),
                     child: Column(
@@ -112,7 +117,7 @@ class _AddAccountScreenState extends ConsumerState<AddAccountScreen> {
                               : Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.6),
+                                  .withAlpha((0.6 * 255).round()),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -150,7 +155,7 @@ class _AddAccountScreenState extends ConsumerState<AddAccountScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _selectedCurrency,
+                    initialValue: _selectedCurrency,
                     decoration: const InputDecoration(
                       labelText: 'Currency',
                       border: OutlineInputBorder(),

@@ -20,6 +20,11 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
   AccountType? _selectedType;
   String? _selectedCurrency;
 
+  // Hide savings, investment and cash from the editable dropdown options
+  List<AccountType> get _visibleAccountTypes => AccountType.values.where((t) {
+        return t != AccountType.savings && t != AccountType.investment && t != AccountType.cash;
+      }).toList();
+
   @override
   void initState() {
     super.initState();
@@ -131,12 +136,16 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<AccountType>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: const InputDecoration(
                 labelText: 'Account Type',
                 border: OutlineInputBorder(),
               ),
-              items: AccountType.values.map((type) {
+              // Only show allowed types; if the current account has a hidden type include it so the field's value is valid
+              items: [
+                ..._visibleAccountTypes,
+                if (_selectedType != null && !_visibleAccountTypes.contains(_selectedType)) _selectedType!,
+              ].map((type) {
                 return DropdownMenuItem(
                   value: type,
                   child: Text(type.name.toUpperCase()),
@@ -148,7 +157,7 @@ class _EditAccountScreenState extends ConsumerState<EditAccountScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedCurrency,
+              initialValue: _selectedCurrency,
               decoration: const InputDecoration(
                 labelText: 'Currency',
                 border: OutlineInputBorder(),

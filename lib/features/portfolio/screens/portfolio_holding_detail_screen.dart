@@ -31,7 +31,7 @@ class HoldingDetailScreen extends ConsumerWidget {
     }
 
     // Promote nullable holding to non-null local to satisfy analyzer
-    final sh = holding!;
+    final sh = holding;
 
     final transactions = ref.watch(stockTransactionProvider).where((t) => t.symbol == symbol).toList();
     final priceHistory = ref.watch(priceHistoryProvider)[symbol] ?? [];
@@ -110,15 +110,26 @@ class HoldingDetailScreen extends ConsumerWidget {
 
                 // Perform actions depending on choice
                 if (res == 'reverse') {
-                  // For each transaction, invert its cash effect on portfolio
+                  // Calculate the net original cash effect of all transactions (buys are negative, sells are positive)
+                  double originalNet = 0.0;
                   for (final t in transactions) {
                     if (t.type == StockTransactionType.buy) {
-                      // refund buy: deposit txn total back
-                      await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(t.total, note: 'Reversal for deleted BUY ${t.symbol}');
+                      originalNet -= t.total;
                     } else if (t.type == StockTransactionType.sell) {
-                      // remove sell proceeds
-                      await ref.read(portfolioTransferProvider.notifier).withdrawFromPortfolio(t.total, note: 'Reversal for deleted SELL ${t.symbol}');
+                      originalNet += t.total;
                     }
+                  }
+
+                  // Desired cash effect when deleting the holding should be as if the remaining shares
+                  // were sold at the current/latest price.
+                  final double desiredCashEffect = sh.quantity * latestPrice;
+
+                  // Compute the delta to apply to portfolio so the final cash effect equals desiredCashEffect
+                  final double delta = desiredCashEffect - originalNet;
+                  if (delta > 0) {
+                    await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(2)}');
+                  } else if (delta < 0) {
+                    await ref.read(portfolioTransferProvider.notifier).withdrawFromPortfolio(-delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(2)}');
                   }
                 }
 
