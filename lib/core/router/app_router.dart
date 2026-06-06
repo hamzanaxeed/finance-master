@@ -16,6 +16,8 @@ import '../../features/portfolio/screens/dividends_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
+import '../../features/more/screens/notes_screen.dart';
+import '../../features/more/screens/passwords_screen.dart';
 import 'package:wealthtracker/features/more/screens/manage_categories_screen.dart';
 import '../../shared/widgets/bottom_navigation.dart';
 import '../../features/portfolio/screens/portfolio_holding_detail_screen.dart';
@@ -52,6 +54,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/more',
             builder: (context, state) => const MoreScreen(),
+          ),
+          GoRoute(
+            path: '/more/notes',
+            builder: (context, state) => const NotesScreen(),
+          ),
+          GoRoute(
+            path: '/more/passwords',
+            builder: (context, state) => const PasswordsScreen(),
           ),
         ],
       ),

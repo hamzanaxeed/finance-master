@@ -12,6 +12,8 @@ class MoreScreen extends ConsumerWidget {
 
     final features = [
       {'title': 'Transactions', 'icon': Icons.swap_horiz, 'route': '/transactions'},
+      {'title': 'Notes', 'icon': Icons.note_alt_outlined, 'route': '/more/notes'},
+      {'title': 'Passwords', 'icon': Icons.lock_outline, 'route': '/more/passwords'},
       {'title': 'Analytics Center', 'icon': Icons.analytics, 'route': '/analytics'},
       {'title': 'Activity Timeline', 'icon': Icons.timeline, 'route': '/activity'},
       {'title': 'Holdings', 'icon': Icons.show_chart, 'route': '/portfolio/holdings'},
