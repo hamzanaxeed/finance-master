@@ -13,12 +13,19 @@ class PortfolioScreen extends ConsumerWidget {
     final holdings = ref.watch(holdingsProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
 
-    final totalInvestment = ref.watch(portfolioTotalInvestedProvider);
+    // Cash currently available in portfolio
     final cashAvailable = ref.watch(portfolioCashProvider);
+    // Current market value of holdings
     final holdingsValue = ref.watch(portfolioHoldingsValueProvider);
+    // Total portfolio value = cash + holdings current value
     final totalValue = ref.watch(portfolioTotalValueProvider);
-    final totalProfitLoss = totalValue - totalInvestment;
-    final profitLossPercent = totalInvestment > 0 ? (totalProfitLoss / totalInvestment) * 100 : 0;
+
+    // Invested = net external transfers into portfolio (transfers in - transfers out)
+    final invested = ref.watch(portfolioTotalInvestedProvider);
+
+    // Profit/Loss calculated against invested (net transfers)
+    final totalProfitLoss = totalValue - invested;
+    final profitLossPercent = invested > 0 ? (totalProfitLoss / invested) * 100 : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +49,7 @@ class PortfolioScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Total Portfolio Value', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
+                Text('Total Portfolio Value', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 0.9), fontSize: 14)),
                 const SizedBox(height: 8),
                 Text(currencyFormat.format(totalValue), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
@@ -87,7 +94,8 @@ class PortfolioScreen extends ConsumerWidget {
                           const Icon(Icons.attach_money, size: 20),
                           const SizedBox(height: 4),
                           const Text('Invested', style: TextStyle(fontSize: 12)),
-                          Text(currencyFormat.format(totalInvestment), style: const TextStyle(fontWeight: FontWeight.bold)),
+                          // Show net invested (transfers in - transfers out)
+                          Text(currencyFormat.format(invested), style: const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -226,7 +234,7 @@ class PortfolioScreen extends ConsumerWidget {
                   if (accounts.isEmpty) const Text('No accounts available. Create an account first.'),
                   if (accounts.isNotEmpty)
                     DropdownButtonFormField<String>(
-                      value: selectedAccountId,
+                      initialValue: selectedAccountId,
                       items: accounts.map((a) => DropdownMenuItem(value: a.id, child: Text(a.name))).toList(),
                       onChanged: (v) => setState(() => selectedAccountId = v),
                       decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),

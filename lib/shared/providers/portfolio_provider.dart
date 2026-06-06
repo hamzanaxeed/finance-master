@@ -70,6 +70,7 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
   }
 }
 
+
 class DividendNotifier extends StateNotifier<List<Dividend>> {
   DividendNotifier() : super([]) {
     _loadDividends();
@@ -437,12 +438,33 @@ final portfolioTransferProvider = StateNotifierProvider<PortfolioTransferNotifie
 // Total invested into portfolio = sum of transfers into portfolio - sum out
 final portfolioTotalInvestedProvider = Provider<double>((ref) {
   final transfers = ref.watch(portfolioTransferProvider);
-  double inAmt = 0, outAmt = 0;
+  double invested = 0.0;
+
   for (var t in transfers) {
-    if (t.fromAccountId != null && t.toAccountId == null) inAmt += t.amount; // account -> portfolio
-    if (t.fromAccountId == null && t.toAccountId != null) outAmt += t.amount; // portfolio -> account
+    // account -> portfolio (inflow)
+    if (t.fromAccountId != null && t.toAccountId == null) {
+      invested += t.amount.abs();
+      continue;
+    }
+
+    // portfolio -> account (outflow)
+    if (t.fromAccountId == null && t.toAccountId != null) {
+      invested -= t.amount.abs();
+      continue;
+    }
+
+    // both null: external deposit/withdrawal recorded directly; respect sign but use abs for clarity
+    if (t.fromAccountId == null && t.toAccountId == null) {
+      if (t.amount >= 0) invested += t.amount.abs();
+      else invested -= t.amount.abs(); // external withdrawal recorded as negative amount
+      continue;
+    }
+
+    // Fallback: if data shape unexpected, treat positive amount as inflow
+    invested += t.amount;
   }
-  return inAmt - outAmt;
+
+  return invested;
 });
 
 // Portfolio holdings value = sum of holdings currentValue
