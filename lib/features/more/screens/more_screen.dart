@@ -16,7 +16,6 @@ class MoreScreen extends ConsumerWidget {
       {'title': 'Activity Timeline', 'icon': Icons.timeline, 'route': '/activity'},
       {'title': 'Holdings', 'icon': Icons.show_chart, 'route': '/portfolio/holdings'},
       {'title': 'Dividends', 'icon': Icons.monetization_on, 'route': '/portfolio/dividends'},
-      {'title': 'Corporate Actions', 'icon': Icons.business, 'route': '/portfolio/corporate-actions'},
     ];
 
     return Scaffold(

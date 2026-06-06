@@ -13,7 +13,6 @@ import '../../features/portfolio/screens/portfolio_holdings_screen.dart';
 import '../../features/portfolio/screens/add_stock_transaction_screen.dart';
 import '../../features/portfolio/screens/portfolio_transactions_screen.dart';
 import '../../features/portfolio/screens/dividends_screen.dart';
-import '../../features/portfolio/screens/corporate_actions_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
@@ -109,10 +108,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DividendsScreen(),
       ),
       GoRoute(
-        path: '/portfolio/corporate-actions',
-        builder: (context, state) => const CorporateActionsScreen(),
-      ),
-      GoRoute(
         path: '/analytics',
         builder: (context, state) => const AnalyticsScreen(),
       ),
@@ -120,6 +115,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/activity',
         builder: (context, state) => const ActivityTimelineScreen(),
       ),
+
     ],
   );
 });

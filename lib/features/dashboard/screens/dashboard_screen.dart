@@ -6,6 +6,7 @@ import '../../../shared/models/transaction.dart' as tmodel;
 
 import '../../../shared/providers/account_provider.dart';
 import '../../../shared/providers/transaction_provider.dart';
+import '../../../shared/providers/portfolio_provider.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/quick_link_card.dart';
 
@@ -30,7 +31,16 @@ class DashboardScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // Show search dialog
+              // open global search
+              showSearch(
+                context: context,
+                delegate: GlobalSearchDelegate(
+                  transactions: transactions,
+                  accounts: ref.read(accountProvider),
+                  holdings: ref.read(holdingsProvider),
+                  currencyFormat: currencyFormat,
+                ),
+              );
             },
           ),
         ],
@@ -167,5 +177,137 @@ class DashboardScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class GlobalSearchDelegate extends SearchDelegate {
+  final List transactions;
+  final List accounts;
+  final List holdings;
+  final NumberFormat currencyFormat;
+
+  GlobalSearchDelegate({required this.transactions, required this.accounts, required this.holdings, required this.currencyFormat});
+
+  @override
+  String? get searchFieldLabel => 'Search transactions, accounts, holdings';
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      if (query.isNotEmpty)
+        IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => close(context, null));
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final q = query.toLowerCase();
+    final txnResults = transactions.where((t) {
+      try {
+        return (t.category.toLowerCase().contains(q) || t.accountId.toLowerCase().contains(q) || t.amount.toString().contains(q));
+      } catch (_) {
+        return false;
+      }
+    }).toList();
+
+    final accResults = accounts.where((a) {
+      try {
+        return (a.name.toLowerCase().contains(q) || a.type.toLowerCase().contains(q));
+      } catch (_) {
+        return false;
+      }
+    }).toList();
+
+    final holdResults = holdings.where((h) {
+      try {
+        return (h.symbol.toLowerCase().contains(q) || h.companyName.toLowerCase().contains(q));
+      } catch (_) {
+        return false;
+      }
+    }).toList();
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        if (txnResults.isNotEmpty) ...[
+          Text('Transactions', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ...txnResults.map((t) => ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: t.type == tmodel.TransactionType.income ? Colors.green.shade100 : Colors.red.shade100,
+                  child: Icon(t.type == tmodel.TransactionType.income ? Icons.arrow_downward : Icons.arrow_upward,
+                      color: t.type == tmodel.TransactionType.income ? Colors.green : Colors.red),
+                ),
+                title: Text(t.category),
+                subtitle: Text(DateFormat.yMMMd().format(t.date)),
+                trailing: Text('${t.type == tmodel.TransactionType.income ? '+' : '-'}${currencyFormat.format(t.amount)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                onTap: () {
+                  close(context, null);
+                  context.push('/transactions/${t.id}');
+                },
+              ))
+        ],
+
+        if (accResults.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text('Accounts', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ...accResults.map((a) => ListTile(
+                leading: const Icon(Icons.account_balance),
+                title: Text(a.name),
+                subtitle: Text('Balance: ${currencyFormat.format(a.currentBalance)}'),
+                onTap: () {
+                  close(context, null);
+                  context.push('/accounts/${a.id}');
+                },
+              ))
+        ],
+
+        if (holdResults.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text('Holdings', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ...holdResults.map((h) => ListTile(
+                leading: const Icon(Icons.show_chart),
+                title: Text(h.symbol),
+                subtitle: Text(h.companyName),
+                onTap: () {
+                  close(context, null);
+                  context.push('/portfolio/holdings/${h.symbol}');
+                },
+              ))
+        ],
+
+        if (txnResults.isEmpty && accResults.isEmpty && holdResults.isEmpty)
+          Center(child: Padding(padding: const EdgeInsets.all(24), child: Text('No results for "${query}"'))),
+      ],
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    if (query.isEmpty) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text('Recent Transactions', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ...transactions.take(6).map((t) => ListTile(
+                title: Text(t.category),
+                subtitle: Text(DateFormat.yMMMd().format(t.date)),
+                onTap: () {
+                  query = t.category;
+                  showResults(context);
+                },
+              )),
+        ],
+      );
+    }
+    return buildResults(context);
   }
 }
