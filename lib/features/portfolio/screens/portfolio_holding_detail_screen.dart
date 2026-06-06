@@ -89,6 +89,45 @@ class HoldingDetailScreen extends ConsumerWidget {
                       initialPrice: latestPrice,
                       initialQuantity: 1,
                     )));
+              } else if (value == 'delete') {
+                // Show confirmation with three choices
+                final res = await showDialog<String?>(
+                  context: context,
+                  builder: (ctx) {
+                    return AlertDialog(
+                      title: const Text('Delete holding and transactions'),
+                      content: const Text('Deleting this holding will remove all related transactions. What would you like to do with the cash effects?'),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(ctx, 'cancel'), child: const Text('Cancel')),
+                        TextButton(onPressed: () => Navigator.pop(ctx, 'nochange'), child: const Text("Don't change portfolio cash")),
+                        ElevatedButton(onPressed: () => Navigator.pop(ctx, 'reverse'), child: const Text('Reverse cash to portfolio')),
+                      ],
+                    );
+                  },
+                );
+
+                if (res == null || res == 'cancel') return;
+
+                // Perform actions depending on choice
+                if (res == 'reverse') {
+                  // For each transaction, invert its cash effect on portfolio
+                  for (final t in transactions) {
+                    if (t.type == StockTransactionType.buy) {
+                      // refund buy: deposit txn total back
+                      await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(t.total, note: 'Reversal for deleted BUY ${t.symbol}');
+                    } else if (t.type == StockTransactionType.sell) {
+                      // remove sell proceeds
+                      await ref.read(portfolioTransferProvider.notifier).withdrawFromPortfolio(t.total, note: 'Reversal for deleted SELL ${t.symbol}');
+                    }
+                  }
+                }
+
+                // Delete transactions for this symbol
+                ref.read(stockTransactionProvider.notifier).deleteTransactionsForSymbol(sh.symbol);
+
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Holding transactions deleted')));
+                // Close detail screen
+                Navigator.pop(context);
               }
             },
             itemBuilder: (context) => [
@@ -96,6 +135,7 @@ class HoldingDetailScreen extends ConsumerWidget {
               const PopupMenuItem(value: 'edit', child: Text('Edit')),
               const PopupMenuItem(value: 'buy', child: Text('Buy share')),
               const PopupMenuItem(value: 'sell', child: Text('Sell share')),
+              const PopupMenuItem(value: 'delete', child: Text('Delete')),
             ],
           ),
         ],

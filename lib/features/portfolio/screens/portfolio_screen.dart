@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../shared/providers/portfolio_provider.dart';
+import '../../../shared/providers/account_provider.dart';
 
 class PortfolioScreen extends ConsumerWidget {
   const PortfolioScreen({super.key});
@@ -12,8 +13,10 @@ class PortfolioScreen extends ConsumerWidget {
     final holdings = ref.watch(holdingsProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
 
-    final totalInvestment = holdings.fold(0.0, (sum, h) => sum + h.totalInvestment);
-    final totalValue = holdings.fold(0.0, (sum, h) => sum + h.currentValue);
+    final totalInvestment = ref.watch(portfolioTotalInvestedProvider);
+    final cashAvailable = ref.watch(portfolioCashProvider);
+    final holdingsValue = ref.watch(portfolioHoldingsValueProvider);
+    final totalValue = ref.watch(portfolioTotalValueProvider);
     final totalProfitLoss = totalValue - totalInvestment;
     final profitLossPercent = totalInvestment > 0 ? (totalProfitLoss / totalInvestment) * 100 : 0;
 
@@ -66,6 +69,21 @@ class PortfolioScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         children: [
+                          const Icon(Icons.account_balance_wallet, size: 20),
+                          const SizedBox(height: 4),
+                          const Text('Cash', style: TextStyle(fontSize: 12)),
+                          Text(currencyFormat.format(cashAvailable), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
                           const Icon(Icons.attach_money, size: 20),
                           const SizedBox(height: 4),
                           const Text('Invested', style: TextStyle(fontSize: 12)),
@@ -84,7 +102,7 @@ class PortfolioScreen extends ConsumerWidget {
                           const Icon(Icons.show_chart, size: 20),
                           const SizedBox(height: 4),
                           const Text('Holdings', style: TextStyle(fontSize: 12)),
-                          Text('${holdings.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(currencyFormat.format(holdingsValue), style: const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -142,15 +160,134 @@ class PortfolioScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => context.push('/portfolio/transactions'),
-                icon: const Icon(Icons.receipt),
-                label: const Text('Transactions'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => context.push('/portfolio/transactions'),
+                      icon: const Icon(Icons.receipt),
+                      label: const Text('Transactions'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton.icon(
+                    onPressed: () => _showTransferDialog(context, ref),
+                    icon: const Icon(Icons.swap_horiz),
+                    label: const Text('Transfer'),
+                  ),
+                ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showTransferDialog(BuildContext context, WidgetRef ref) {
+    final accounts = ref.read(accountProvider);
+    showDialog(
+      context: context,
+      builder: (context) {
+        String? selectedAccountId = accounts.isNotEmpty ? accounts.first.id : null;
+        bool toPortfolio = true; // true: account -> portfolio, false: portfolio -> account
+        final _formKey = GlobalKey<FormState>();
+        final _amountCtrl = TextEditingController();
+        final _noteCtrl = TextEditingController();
+
+        return AlertDialog(
+          title: const Text('Transfer funds'),
+          content: StatefulBuilder(builder: (context, setState) {
+            return Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('From account → Portfolio'),
+                          selected: toPortfolio,
+                          onSelected: (v) => setState(() => toPortfolio = true),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Portfolio → Account'),
+                          selected: !toPortfolio,
+                          onSelected: (v) => setState(() => toPortfolio = false),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  if (accounts.isEmpty) const Text('No accounts available. Create an account first.'),
+                  if (accounts.isNotEmpty)
+                    DropdownButtonFormField<String>(
+                      value: selectedAccountId,
+                      items: accounts.map((a) => DropdownMenuItem(value: a.id, child: Text(a.name))).toList(),
+                      onChanged: (v) => setState(() => selectedAccountId = v),
+                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+                    ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _amountCtrl,
+                    decoration: const InputDecoration(labelText: 'Amount', prefixText: 'Rs ', border: OutlineInputBorder()),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Required';
+                      final a = double.tryParse(v);
+                      if (a == null || a <= 0) return 'Enter valid amount';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _noteCtrl, decoration: const InputDecoration(labelText: 'Note', border: OutlineInputBorder())),
+                ],
+              ),
+            );
+          }),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () async {
+                if (!_formKey.currentState!.validate()) return;
+                final amount = double.parse(_amountCtrl.text);
+                if (selectedAccountId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select an account')));
+                  return;
+                }
+
+                final portfolioCash = ref.read(portfolioCashProvider);
+
+                if (toPortfolio) {
+                  // Check account balance
+                  final acc = ref.read(accountProvider.notifier).getAccountById(selectedAccountId!);
+                  if (acc == null || acc.currentBalance < amount) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Insufficient account balance')));
+                    return;
+                  }
+                  await ref.read(portfolioTransferProvider.notifier).transferFromAccountToPortfolio(selectedAccountId!, amount, note: _noteCtrl.text.isEmpty ? null : _noteCtrl.text);
+                } else {
+                  // portfolio -> account
+                  if (portfolioCash < amount) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Insufficient portfolio cash')));
+                    return;
+                  }
+                  await ref.read(portfolioTransferProvider.notifier).transferFromPortfolioToAccount(selectedAccountId!, amount, note: _noteCtrl.text.isEmpty ? null : _noteCtrl.text);
+                }
+
+
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transfer completed')));
+                Navigator.pop(context);
+              },
+              child: const Text('Transfer'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

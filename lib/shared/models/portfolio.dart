@@ -193,3 +193,39 @@ class CorporateAction {
     );
   }
 }
+
+class PortfolioTransfer {
+  final String id;
+  final String? fromAccountId; // null when transfer is external
+  final String? toAccountId; // null when transfer is external
+  final double amount;
+  final DateTime date;
+  final String? note;
+
+  PortfolioTransfer({
+    String? id,
+    this.fromAccountId,
+    this.toAccountId,
+    required this.amount,
+    required this.date,
+    this.note,
+  }) : id = id ?? const Uuid().v4();
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'fromAccountId': fromAccountId,
+        'toAccountId': toAccountId,
+        'amount': amount,
+        'date': date.toIso8601String(),
+        'note': note,
+      };
+
+  factory PortfolioTransfer.fromJson(Map<String, dynamic> json) => PortfolioTransfer(
+        id: json['id'] as String?,
+        fromAccountId: json['fromAccountId'] as String?,
+        toAccountId: json['toAccountId'] as String?,
+        amount: (json['amount'] as num).toDouble(),
+        date: DateTime.parse(json['date'] as String),
+        note: json['note'] as String?,
+      );
+}

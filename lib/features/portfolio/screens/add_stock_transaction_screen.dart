@@ -39,7 +39,7 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
   void initState() {
     super.initState();
     // Prefill if initial values were provided
-    final w = widget as AddStockTransactionScreen;
+    final w = widget;
     if (w.initialSymbol != null) _symbolController.text = w.initialSymbol!.toUpperCase();
     if (w.initialPrice != null) _priceController.text = w.initialPrice!.toStringAsFixed(2);
     if (w.initialQuantity != null) _quantityController.text = w.initialQuantity!.toStringAsFixed(2);
@@ -57,13 +57,19 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
         date: _selectedDate,
       );
 
-      ref.read(stockTransactionProvider.notifier).addTransaction(transaction);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Transaction added successfully')),
-      );
-
-      context.pop();
+      // Use notifier which now returns a Future<bool> indicating success (insufficient funds when buying)
+      ref.read(stockTransactionProvider.notifier).addTransaction(transaction).then((success) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Transaction added successfully')),
+          );
+          context.pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Insufficient portfolio funds for this buy transaction')),
+          );
+        }
+      });
     }
   }
 

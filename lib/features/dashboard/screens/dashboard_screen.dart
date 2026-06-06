@@ -59,14 +59,14 @@ class DashboardScreen extends ConsumerWidget {
                 StatCard(
                   title: 'Monthly Income',
                   value: currencyFormat.format(monthlyIncome),
-                  icon: Icons.arrow_upward,
+                  icon: Icons.arrow_downward,
                   color: Colors.green,
                   subtitle: 'This month',
                 ),
                 StatCard(
                   title: 'Monthly Expense',
                   value: currencyFormat.format(monthlyExpense),
-                  icon: Icons.arrow_downward,
+                  icon: Icons.arrow_upward,
                   color: Colors.red,
                   subtitle: 'This month',
                 ),

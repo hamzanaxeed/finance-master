@@ -2,15 +2,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/portfolio.dart';
+import '../models/transaction.dart';
+import 'account_provider.dart';
+import 'transaction_provider.dart';
 
 class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
-  StockTransactionNotifier() : super([]) {
+  final Ref ref;
+
+  StockTransactionNotifier(this.ref) : super([]) {
     _loadStockTransactions();
   }
 
-  void addTransaction(StockTransaction transaction) {
+  /// Adds a stock transaction. Returns true if successful. For BUY transactions
+  /// the portfolio cash balance is checked and decreased by transaction.total.
+  /// For SELL transactions the portfolio cash is increased by transaction.total.
+  Future<bool> addTransaction(StockTransaction transaction) async {
+    // Access portfolio cash
+    final portfolioCashNotifier = ref.read(_portfolioCashProvider.notifier);
+    final currentCash = ref.read(portfolioCashProvider);
+
+    if (transaction.type == StockTransactionType.buy) {
+      if (currentCash < transaction.total) {
+        return false; // insufficient funds
+      }
+      // deduct from portfolio cash
+      portfolioCashNotifier.withdraw(transaction.total);
+    } else {
+      // sell: add to portfolio cash
+      portfolioCashNotifier.deposit(transaction.total);
+    }
+
     state = [...state, transaction];
-    _saveStockTransactions();
+    await _saveStockTransactions();
+    return true;
   }
 
   void deleteTransaction(String id) {
@@ -37,6 +61,12 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
           .map((e) => StockTransaction.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (_) {}
+  }
+
+  /// Delete all transactions for a given symbol (used when deleting a holding)
+  void deleteTransactionsForSymbol(String symbol) {
+    state = state.where((txn) => txn.symbol != symbol).toList();
+    _saveStockTransactions();
   }
 }
 
@@ -110,10 +140,8 @@ class CorporateActionNotifier extends StateNotifier<List<CorporateAction>> {
   }
 }
 
-final stockTransactionProvider =
-    StateNotifierProvider<StockTransactionNotifier, List<StockTransaction>>(
-        (ref) {
-  return StockTransactionNotifier();
+final stockTransactionProvider = StateNotifierProvider<StockTransactionNotifier, List<StockTransaction>>((ref) {
+  return StockTransactionNotifier(ref);
 });
 
 final dividendProvider =
@@ -290,4 +318,142 @@ class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
 
 final holdingMetaProvider = StateNotifierProvider<HoldingMetaNotifier, Map<String, String>>((ref) {
   return HoldingMetaNotifier();
+});
+
+// ---------------- Portfolio cash and transfers ----------------
+
+// Internal provider token for notifier access
+final _portfolioCashProvider = StateNotifierProvider<PortfolioCashNotifier, double>((ref) {
+  return PortfolioCashNotifier();
+});
+
+// Public alias
+final portfolioCashProvider = Provider<double>((ref) => ref.watch(_portfolioCashProvider));
+
+class PortfolioCashNotifier extends StateNotifier<double> {
+  PortfolioCashNotifier() : super(0) {
+    _load();
+  }
+
+  static const String _key = 'portfolio_cash_balance';
+
+  void deposit(double amount) {
+    state = state + amount;
+    _save();
+  }
+
+  void withdraw(double amount) {
+    state = state - amount;
+    if (state < 0) state = 0; // safety
+    _save();
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_key, state);
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final v = prefs.getDouble(_key);
+    if (v != null) state = v;
+  }
+}
+
+// Transfers between accounts and portfolio are recorded here
+class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
+  final Ref ref;
+
+  PortfolioTransferNotifier(this.ref) : super([]) {
+    _load();
+  }
+
+  static const String _key = 'portfolio_transfers';
+
+  Future<void> transferFromAccountToPortfolio(String accountId, double amount, {String? note}) async {
+    // withdraw from account
+    ref.read(accountProvider.notifier).updateBalance(accountId, -amount);
+    // deposit to portfolio
+    ref.read(_portfolioCashProvider.notifier).deposit(amount);
+    final t = PortfolioTransfer(fromAccountId: accountId, toAccountId: null, amount: amount, date: DateTime.now(), note: note);
+    state = [...state, t];
+    await _save();
+
+    // record as general transaction
+    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'Portfolio transfer in', accountId: accountId, toAccountId: null, date: DateTime.now());
+    ref.read(transactionProvider.notifier).addTransaction(txn);
+  }
+
+  Future<void> transferFromPortfolioToAccount(String accountId, double amount, {String? note}) async {
+    // withdraw from portfolio
+    ref.read(_portfolioCashProvider.notifier).withdraw(amount);
+    // deposit to account
+    ref.read(accountProvider.notifier).updateBalance(accountId, amount);
+    final t = PortfolioTransfer(fromAccountId: null, toAccountId: accountId, amount: amount, date: DateTime.now(), note: note);
+    state = [...state, t];
+    await _save();
+
+    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'Portfolio transfer out', accountId: accountId, toAccountId: null, date: DateTime.now());
+    ref.read(transactionProvider.notifier).addTransaction(txn);
+  }
+
+  /// Directly deposit to portfolio cash without an account transfer. Records a PortfolioTransfer with null accounts.
+  Future<void> depositToPortfolio(double amount, {String? note}) async {
+    ref.read(_portfolioCashProvider.notifier).deposit(amount);
+    final t = PortfolioTransfer(fromAccountId: null, toAccountId: null, amount: amount, date: DateTime.now(), note: note ?? 'Deposit to portfolio');
+    state = [...state, t];
+    await _save();
+  }
+
+  /// Directly withdraw from portfolio cash without an account transfer. Records a PortfolioTransfer with null accounts.
+  Future<void> withdrawFromPortfolio(double amount, {String? note}) async {
+    ref.read(_portfolioCashProvider.notifier).withdraw(amount);
+    final t = PortfolioTransfer(fromAccountId: null, toAccountId: null, amount: -amount, date: DateTime.now(), note: note ?? 'Withdraw from portfolio');
+    state = [...state, t];
+    await _save();
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = state.map((t) => t.toJson()).toList();
+    await prefs.setString(_key, jsonEncode(list));
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_key);
+    if (raw == null) return;
+    try {
+      final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
+      state = decoded.map((e) => PortfolioTransfer.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (_) {}
+  }
+}
+
+final portfolioTransferProvider = StateNotifierProvider<PortfolioTransferNotifier, List<PortfolioTransfer>>((ref) {
+  return PortfolioTransferNotifier(ref);
+});
+
+// Total invested into portfolio = sum of transfers into portfolio - sum out
+final portfolioTotalInvestedProvider = Provider<double>((ref) {
+  final transfers = ref.watch(portfolioTransferProvider);
+  double inAmt = 0, outAmt = 0;
+  for (var t in transfers) {
+    if (t.fromAccountId != null && t.toAccountId == null) inAmt += t.amount; // account -> portfolio
+    if (t.fromAccountId == null && t.toAccountId != null) outAmt += t.amount; // portfolio -> account
+  }
+  return inAmt - outAmt;
+});
+
+// Portfolio holdings value = sum of holdings currentValue
+final portfolioHoldingsValueProvider = Provider<double>((ref) {
+  final holdings = ref.watch(holdingsProvider);
+  return holdings.fold(0.0, (sum, h) => sum + h.currentValue);
+});
+
+// Portfolio total value = cash + holdings value
+final portfolioTotalValueProvider = Provider<double>((ref) {
+  final cash = ref.watch(portfolioCashProvider);
+  final holdings = ref.watch(portfolioHoldingsValueProvider);
+  return cash + holdings;
 });
