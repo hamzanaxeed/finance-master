@@ -104,6 +104,7 @@ class Dividend {
   final String id;
   final String symbol;
   final String companyName;
+  final String? transactionId; // optional link to hidden transaction
   final double amountPerShare;
   final double totalReceived;
   final DateTime date;
@@ -112,6 +113,7 @@ class Dividend {
     String? id,
     required this.symbol,
     required this.companyName,
+    this.transactionId,
     required this.amountPerShare,
     required this.totalReceived,
     required this.date,
@@ -122,6 +124,7 @@ class Dividend {
       'id': id,
       'symbol': symbol,
       'companyName': companyName,
+      'transactionId': transactionId,
       'amountPerShare': amountPerShare,
       'totalReceived': totalReceived,
       'date': date.toIso8601String(),
@@ -133,6 +136,7 @@ class Dividend {
       id: json['id'] as String?,
       symbol: json['symbol'] as String,
       companyName: (json['companyName'] as String?) ?? (json['symbol'] as String),
+      transactionId: (json['transactionId'] as String?),
       amountPerShare: (json['amountPerShare'] as num).toDouble(),
       totalReceived: (json['totalReceived'] as num).toDouble(),
       date: DateTime.parse(json['date'] as String),

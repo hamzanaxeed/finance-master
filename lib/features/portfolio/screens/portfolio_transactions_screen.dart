@@ -22,9 +22,7 @@ class PortfolioTransactionsScreen extends ConsumerWidget {
       combined.add(_TimelineItem(kind: 'dividend', date: d.date, data: d));
     }
     combined.sort((a, b) => b.date.compareTo(a.date));
-
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Stock Transactions')),
       body: combined.isEmpty
@@ -81,3 +79,4 @@ class _TimelineItem {
   final Object data;
   _TimelineItem({required this.kind, required this.date, required this.data});
 }
+

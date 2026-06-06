@@ -55,16 +55,17 @@ class _AddDividendScreenState extends ConsumerState<AddDividendScreen> {
     final per = double.tryParse(_perShareController.text.trim()) ?? 0.0;
 
     final total = q * per;
-    final dividend = Dividend(symbol: symbol, companyName: company, amountPerShare: per, totalReceived: total, date: _date);
 
-    // add dividend and deposit to portfolio cash
-    ref.read(dividendProvider.notifier).addDividend(dividend);
+    // Deposit to portfolio cash (records a PortfolioTransfer)
     await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(total, note: 'Dividend ${symbol} received');
 
-    // Record an income transaction to the transactions provider so it shows in transaction history.
-    // We use accountId 'portfolio' to indicate portfolio cash. Adjust if you prefer a real account id.
+    // Create a hidden transaction and add it so it can be linked to the dividend for reversible delete
     final txn = Transaction(type: TransactionType.income, amount: total, category: 'Dividend', accountId: 'portfolio', date: _date, notes: 'Dividend from $company ($symbol)', hiddenFromGlobal: true);
     ref.read(transactionProvider.notifier).addTransaction(txn);
+
+    // Now create dividend with link to transaction id
+    final dividend = Dividend(symbol: symbol, companyName: company, transactionId: txn.id, amountPerShare: per, totalReceived: total, date: _date);
+    ref.read(dividendProvider.notifier).addDividend(dividend);
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dividend recorded')));
     Navigator.pop(context);

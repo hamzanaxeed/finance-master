@@ -35,6 +35,14 @@ class HoldingDetailScreen extends ConsumerWidget {
     final sh = holding;
 
     final transactions = ref.watch(stockTransactionProvider).where((t) => t.symbol == symbol).toList();
+    final dividends = ref.watch(dividendProvider).where((d) => d.symbol == symbol).toList();
+    // compute total dividends for this holding and group by year
+    final totalDividendsForHolding = dividends.fold<double>(0.0, (sum, d) => sum + d.totalReceived);
+    final Map<int, List<Dividend>> dividendsByYear = {};
+    for (final d in dividends) {
+      final y = d.date.year;
+      dividendsByYear.putIfAbsent(y, () => []).add(d);
+    }
     final priceHistory = ref.watch(priceHistoryProvider)[symbol] ?? [];
 
     // firstTxnDate not used currently
@@ -257,6 +265,55 @@ class HoldingDetailScreen extends ConsumerWidget {
                           subtitle: Text(DateFormat.yMMMd().format(t.date)),
                           trailing: Text('Rs ${t.total.toStringAsFixed(2)}'),
                         ),
+                      );
+                    }).toList(),
+                  ),
+
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Dividends', style: Theme.of(context).textTheme.titleMedium),
+                Text('Total: Rs ${totalDividendsForHolding.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+            const SizedBox(height: 8),
+            dividends.isEmpty
+                ? const Text('No dividends for this holding')
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: dividendsByYear.keys.toList().reversed.map((year) {
+                      final list = dividendsByYear[year]!..sort((a, b) => b.date.compareTo(a.date));
+                      final yearTotal = list.fold<double>(0.0, (s, d) => s + d.totalReceived);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(year.toString(), style: Theme.of(context).textTheme.bodyLarge),
+                                Text('Year total: Rs ${yearTotal.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
+                              ],
+                            ),
+                          ),
+                          ...list.map((d) {
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: ListTile(
+                                leading: const CircleAvatar(
+                                  backgroundColor: Colors.green,
+                                  child: Icon(Icons.monetization_on, color: Colors.white),
+                                ),
+                                title: Text('${d.companyName} (${d.symbol})'),
+                                subtitle: Text('Rs ${d.amountPerShare.toStringAsFixed(2)} per share\n${DateFormat.yMMMd().format(d.date)}'),
+                                trailing: Text('${d.totalReceived.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                                isThreeLine: true,
+                              ),
+                            );
+                          }).toList(),
+                        ],
                       );
                     }).toList(),
                   ),
