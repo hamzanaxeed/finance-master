@@ -72,7 +72,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                 ? const BackButton()
                 : IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/'))),
         title: const Text('Transactions'),
-        centerTitle: true,
+
         // actions intentionally left empty; sort control moved below filter
         actions: [],
       ),

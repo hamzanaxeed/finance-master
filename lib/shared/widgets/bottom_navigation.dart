@@ -32,7 +32,7 @@ class BottomNavigation extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'Transactions',
+            label: 'Reports',
           ),
           NavigationDestination(
             icon: Icon(Icons.menu),
