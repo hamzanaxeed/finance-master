@@ -163,50 +163,6 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // View All Features
-            Card(
-              child: InkWell(
-                onTap: () => context.go('/more'),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'View All Features',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            Text(
-                              'Access transactions, activity timeline & more',
-                              style: Theme.of(context).textTheme.bodySmall,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

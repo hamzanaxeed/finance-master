@@ -26,8 +26,18 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
     final monthlyExpense = ref.watch(monthlyExpenseProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 0);
 
+    final uri = GoRouterState.of(context).uri;
+    final fromNav = uri.queryParameters['from'] == 'nav';
+
     return Scaffold(
       appBar: AppBar(
+        // show back button only when opened via external link (not from bottom nav)
+        leading: fromNav
+            ? null
+            : (Navigator.of(context).canPop()
+
+                ? const BackButton()
+                : IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/'))),
         title: const Text('Transactions'),
         actions: [
           IconButton(

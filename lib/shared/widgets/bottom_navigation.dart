@@ -70,7 +70,8 @@ class BottomNavigation extends StatelessWidget {
         context.go('/portfolio');
         break;
       case 3:
-        context.go('/transactions');
+        // mark navigation origin to differentiate from external deep links
+        context.go('/transactions?from=nav');
         break;
       case 4:
         context.go('/more');

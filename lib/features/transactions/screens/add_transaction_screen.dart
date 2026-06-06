@@ -85,6 +85,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Navigator.of(context).canPop()
+            ? const BackButton()
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.go('/'),
+              ),
         title: const Text('Add Transaction'),
       ),
       body: Form(

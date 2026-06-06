@@ -14,7 +14,6 @@ import '../../features/portfolio/screens/add_stock_transaction_screen.dart';
 import '../../features/portfolio/screens/portfolio_transactions_screen.dart';
 import '../../features/portfolio/screens/dividends_screen.dart';
 import '../../features/portfolio/screens/corporate_actions_screen.dart';
-import '../../features/reports/screens/reports_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
@@ -43,8 +42,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const PortfolioScreen(),
           ),
           GoRoute(
-            path: '/reports',
-            builder: (context, state) => const ReportsScreen(),
+            path: '/transactions',
+            builder: (context, state) => const TransactionsListScreen(),
           ),
           GoRoute(
             path: '/more',
@@ -69,10 +68,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           final id = state.pathParameters['id']!;
           return AccountDetailsScreen(accountId: id);
         },
-      ),
-      GoRoute(
-        path: '/transactions',
-        builder: (context, state) => const TransactionsListScreen(),
       ),
       GoRoute(
         path: '/transactions/add',
