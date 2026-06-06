@@ -24,25 +24,6 @@ class MoreScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const CircleAvatar(radius: 30, child: Icon(Icons.person, size: 30)),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('John Doe', style: Theme.of(context).textTheme.titleMedium),
-                      Text('john.doe@example.com', style: Theme.of(context).textTheme.bodySmall),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
           Text('Features', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           ...features.map((feature) => Card(

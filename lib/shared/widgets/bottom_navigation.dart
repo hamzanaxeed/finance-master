@@ -30,9 +30,9 @@ class BottomNavigation extends StatelessWidget {
             label: 'Portfolio',
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Reports',
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long),
+            label: 'Transactions',
           ),
           NavigationDestination(
             icon: Icon(Icons.menu),
@@ -49,7 +49,7 @@ class BottomNavigation extends StatelessWidget {
     if (location == '/') return 0;
     if (location.startsWith('/accounts')) return 1;
     if (location.startsWith('/portfolio')) return 2;
-    if (location.startsWith('/reports')) return 3;
+    if (location.startsWith('/transactions')) return 3;
     if (location.startsWith('/more') ||
         location.startsWith('/transactions') ||
         location.startsWith('/analytics') ||
@@ -59,6 +59,7 @@ class BottomNavigation extends StatelessWidget {
 
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
+
       case 0:
         context.go('/');
         break;
@@ -69,7 +70,7 @@ class BottomNavigation extends StatelessWidget {
         context.go('/portfolio');
         break;
       case 3:
-        context.go('/reports');
+        context.go('/transactions');
         break;
       case 4:
         context.go('/more');
