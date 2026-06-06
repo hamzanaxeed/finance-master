@@ -381,7 +381,7 @@ class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
     await _save();
 
     // record as general transaction
-    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'Portfolio transfer in', accountId: accountId, toAccountId: null, date: DateTime.now());
+    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'To Portfolio', accountId: accountId, toAccountId: null, date: DateTime.now());
     ref.read(transactionProvider.notifier).addTransaction(txn);
   }
 
@@ -394,7 +394,7 @@ class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
     state = [...state, t];
     await _save();
 
-    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'Portfolio transfer out', accountId: accountId, toAccountId: null, date: DateTime.now());
+    final txn = Transaction(type: TransactionType.transfer, amount: amount, category: 'From Portfolio', accountId: accountId, toAccountId: null, date: DateTime.now());
     ref.read(transactionProvider.notifier).addTransaction(txn);
   }
 

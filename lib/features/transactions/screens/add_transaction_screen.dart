@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../shared/models/transaction.dart';
 import '../../../shared/providers/transaction_provider.dart';
 import '../../../shared/providers/account_provider.dart';
+import '../../../shared/providers/portfolio_provider.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   const AddTransactionScreen({super.key});
@@ -20,6 +21,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   TransactionType _selectedType = TransactionType.expense;
   String? _selectedCategory;
   String? _selectedAccountId;
+  String? _selectedToAccountId; // for transfers: destination account id or '__portfolio__'
   DateTime _selectedDate = DateTime.now();
 
   @override
@@ -43,15 +45,87 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   }
 
   void _handleSubmit() {
-    if (_formKey.currentState!.validate() && _selectedAccountId != null && _selectedCategory != null) {
+    if (_formKey.currentState!.validate() && _selectedCategory != null) {
       final amount = double.parse(_amountController.text);
 
       // Check account balance for expense/transfer
-      final account = ref.read(accountProvider.notifier).getAccountById(_selectedAccountId!);
-      if (_selectedType == TransactionType.expense && account != null && amount > account.currentBalance) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Insufficient account balance for this expense')),
-        );
+      if (_selectedType == TransactionType.expense) {
+        final account = ref.read(accountProvider.notifier).getAccountById(_selectedAccountId!);
+        if (account != null && amount > account.currentBalance) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Insufficient account balance for this expense')),
+          );
+          return;
+        }
+      }
+
+      // Handle transfer logic separately
+      if (_selectedType == TransactionType.transfer) {
+        // require from and to
+        if (_selectedAccountId == null || _selectedToAccountId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select both From and To for transfer')));
+          return;
+        }
+
+        // prevent same-account transfer
+        if (_selectedAccountId == _selectedToAccountId) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select different accounts for transfer')));
+          return;
+        }
+
+        // From account -> To account (both accounts)
+        if (_selectedAccountId != '__portfolio__' && _selectedToAccountId != '__portfolio__') {
+          // check balance
+          final fromAcc = ref.read(accountProvider.notifier).getAccountById(_selectedAccountId!);
+          if (fromAcc == null || amount > fromAcc.currentBalance) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Insufficient account balance for this transfer')));
+            return;
+          }
+
+          // perform balance updates
+          ref.read(accountProvider.notifier).updateBalance(_selectedAccountId!, -amount);
+          ref.read(accountProvider.notifier).updateBalance(_selectedToAccountId!, amount);
+
+          // record transaction
+          final txn = Transaction(
+            type: TransactionType.transfer,
+            amount: amount,
+            category: 'Account transfer',
+            accountId: _selectedAccountId!,
+            toAccountId: _selectedToAccountId!,
+            date: _selectedDate,
+            notes: _notesController.text.isEmpty ? null : _notesController.text,
+          );
+          ref.read(transactionProvider.notifier).addTransaction(txn);
+
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transfer completed')));
+          context.pop();
+          return;
+        }
+
+        // Account -> Portfolio
+        if (_selectedAccountId != '__portfolio__' && _selectedToAccountId == '__portfolio__') {
+          // use portfolio transfer notifier (handles balances and records transaction)
+          final acctId = _selectedAccountId!;
+          final note = _notesController.text.isEmpty ? null : _notesController.text;
+           ref.read(portfolioTransferProvider.notifier).transferFromAccountToPortfolio(acctId, amount, note: note);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transfer to portfolio completed')));
+          context.pop();
+          return;
+        }
+
+        // Portfolio -> Account
+        if (_selectedAccountId == '__portfolio__' && _selectedToAccountId != '__portfolio__') {
+          final acctId = _selectedToAccountId!;
+          final note = _notesController.text.isEmpty ? null : _notesController.text;
+          ref.read(portfolioTransferProvider.notifier).transferFromPortfolioToAccount(acctId, amount, note: note);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transfer from portfolio completed')));
+          context.pop();
+          return;
+        }
+
+        // any other unexpected case
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid transfer')));
         return;
       }
 
@@ -216,23 +290,55 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               validator: (value) => value == null ? 'Please select category' : null,
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedAccountId,
-              decoration: const InputDecoration(
-                labelText: 'Account',
-                border: OutlineInputBorder(),
+            // Account selection. For transfers show From and To selectors; otherwise single Account
+            if (_selectedType == TransactionType.transfer) ...[
+              DropdownButtonFormField<String>(
+                value: _selectedAccountId,
+                decoration: const InputDecoration(
+                  labelText: 'From (Account or Portfolio)',
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  // portfolio option
+                  const DropdownMenuItem(value: '__portfolio__', child: Text('Portfolio')),
+                  ...accounts.map((account) => DropdownMenuItem(value: account.id, child: Text(account.name))),
+                ],
+                onChanged: (v) => setState(() => _selectedAccountId = v),
+                validator: (v) => v == null ? 'Select from' : null,
               ),
-              items: accounts.map((account) {
-                return DropdownMenuItem(
-                  value: account.id,
-                  child: Text(account.name),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() => _selectedAccountId = value);
-              },
-              validator: (value) => value == null ? 'Please select account' : null,
-            ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: _selectedToAccountId,
+                decoration: const InputDecoration(
+                  labelText: 'To (Account or Portfolio)',
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  const DropdownMenuItem(value: '__portfolio__', child: Text('Portfolio')),
+                  ...accounts.map((account) => DropdownMenuItem(value: account.id, child: Text(account.name))),
+                ],
+                onChanged: (v) => setState(() => _selectedToAccountId = v),
+                validator: (v) => v == null ? 'Select to' : null,
+              ),
+            ] else ...[
+              DropdownButtonFormField<String>(
+                initialValue: _selectedAccountId,
+                decoration: const InputDecoration(
+                  labelText: 'Account',
+                  border: OutlineInputBorder(),
+                ),
+                items: accounts.map((account) {
+                  return DropdownMenuItem(
+                    value: account.id,
+                    child: Text(account.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() => _selectedAccountId = value);
+                },
+                validator: (value) => value == null ? 'Please select account' : null,
+              ),
+            ],
             const SizedBox(height: 16),
             InkWell(
               onTap: () async {
