@@ -72,21 +72,9 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                 ? const BackButton()
                 : IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/'))),
         title: const Text('Transactions'),
-        actions: [
-          // Add button moved to floating action button
-          // filter moved to inline selector below (replaced chips)
-          PopupMenuButton<String>(
-            tooltip: 'Sort',
-            icon: const Icon(Icons.sort),
-            onSelected: (v) => setState(() => _sortOption = v),
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'date_desc', child: Text('Date: Newest')),
-              const PopupMenuItem(value: 'date_asc', child: Text('Date: Oldest')),
-              const PopupMenuItem(value: 'amount_desc', child: Text('Amount: High → Low')),
-              const PopupMenuItem(value: 'amount_asc', child: Text('Amount: Low → High')),
-            ],
-          ),
-        ],
+        centerTitle: true,
+        // actions intentionally left empty; sort control moved below filter
+        actions: [],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/transactions/add'),
@@ -119,74 +107,121 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
               ],
             ),
           ),
+          // Header row: title + filter/sort pills
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // Keeps the title anchored to the extreme left
               children: [
-                // Left: descriptive title reflecting the current filter
+                // Line 1: Descriptive title (Extreme Left)
                 Builder(builder: (context) {
                   final title = _filterType == null
                       ? 'All transactions'
                       : (_filterType == TransactionType.income
-                          ? 'Income transactions'
-                          : (_filterType == TransactionType.expense ? 'Expense transactions' : 'Transfer transactions'));
-                  return Text(title, style: Theme.of(context).textTheme.bodyMedium);
+                      ? 'Income transactions'
+                      : (_filterType == TransactionType.expense ? 'Expense transactions' : 'Transfer transactions'));
+
+                  return Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
                 }),
 
-                // Right: compact selector to change the filter
-                Builder(builder: (context) {
-                  final filterLabel = _filterType == null
-                      ? 'All'
-                      : (_filterType == TransactionType.income
+                const SizedBox(height: 12), // Subtle spacing between lines
+
+                // Line 2: Filters Row stretched and pushed to the Extreme Right
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end, // Pushes the selectors to the extreme right edge
+                  children: [
+                    // Filter popup
+                    Builder(builder: (context) {
+                      final filterLabel = _filterType == null
+                          ? 'All'
+                          : (_filterType == TransactionType.income
                           ? 'Income'
                           : (_filterType == TransactionType.expense ? 'Expense' : 'Transfer'));
 
-                  return PopupMenuButton<String>(
-                    tooltip: 'Filter transactions',
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(filterLabel),
-                          const SizedBox(width: 6),
-                          const Icon(Icons.arrow_drop_down),
+                      return PopupMenuButton<String>(
+                        tooltip: 'Filter transactions',
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Theme.of(context).dividerColor),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(filterLabel),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.arrow_drop_down),
+                            ],
+                          ),
+                        ),
+                        onSelected: (v) => setState(() {
+                          switch (v) {
+                            case 'all':
+                              _filterType = null;
+                              break;
+                            case 'income':
+                              _filterType = TransactionType.income;
+                              break;
+                            case 'expense':
+                              _filterType = TransactionType.expense;
+                              break;
+                            case 'transfer':
+                              _filterType = TransactionType.transfer;
+                              break;
+                          }
+                        }),
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(value: 'all', child: Text('All')),
+                          const PopupMenuItem(value: 'income', child: Text('Income')),
+                          const PopupMenuItem(value: 'expense', child: Text('Expense')),
+                          const PopupMenuItem(value: 'transfer', child: Text('Transfer')),
                         ],
-                      ),
-                    ),
-                    onSelected: (v) => setState(() {
-                      switch (v) {
-                        case 'all':
-                          _filterType = null;
-                          break;
-                        case 'income':
-                          _filterType = TransactionType.income;
-                          break;
-                        case 'expense':
-                          _filterType = TransactionType.expense;
-                          break;
-                        case 'transfer':
-                          _filterType = TransactionType.transfer;
-                          break;
-                      }
+                      );
                     }),
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'all', child: Text('All')),
-                      const PopupMenuItem(value: 'income', child: Text('Income')),
-                      const PopupMenuItem(value: 'expense', child: Text('Expense')),
-                      const PopupMenuItem(value: 'transfer', child: Text('Transfer')),
-                    ],
-                  );
-                }),
+
+                    const SizedBox(width: 8),
+
+                    // Sort popup
+                    PopupMenuButton<String>(
+                      tooltip: 'Sort transactions',
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Theme.of(context).dividerColor),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.sort, size: 18),
+                            const SizedBox(width: 8),
+                            Text(_getSortLabel(_sortOption)),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
+                      ),
+                      onSelected: (v) => setState(() => _sortOption = v),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(value: 'date_desc', child: Row(children: const [Icon(Icons.calendar_today, size:16), SizedBox(width:8), Text('Date: Newest')])),
+                        PopupMenuItem(value: 'date_asc', child: Row(children: const [Icon(Icons.calendar_today, size:16), SizedBox(width:8), Text('Date: Oldest')])),
+                        PopupMenuItem(value: 'amount_desc', child: Row(children: const [Icon(Icons.attach_money, size:16), SizedBox(width:8), Text('Amount: High → Low')])),
+                        PopupMenuItem(value: 'amount_asc', child: Row(children: const [Icon(Icons.attach_money, size:16), SizedBox(width:8), Text('Amount: Low → High')])),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          // Move the list into the outer Column as an Expanded so it has a bounded height
           Expanded(
             child: displayedTransactions.isEmpty
                 ? Center(
@@ -198,6 +233,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                           size: 64,
                           color: Theme.of(context).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
                         ),
+
                         const SizedBox(height: 16),
                         const Text('No transactions yet'),
                         const SizedBox(height: 8),
@@ -244,6 +280,22 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
         ],
       ),
     );
+  }
+
+  String _getSortLabel(String value) {
+    switch (value) {
+      case 'date_desc':
+        return 'Date: Newest';
+      case 'date_asc':
+        return 'Date: Oldest';
+
+      case 'amount_desc':
+        return 'Amount: High → Low';
+      case 'amount_asc':
+        return 'Amount: Low → High';
+      default:
+        return 'Sort';
+    }
   }
 
   Color _getTransactionColor(TransactionType type) {

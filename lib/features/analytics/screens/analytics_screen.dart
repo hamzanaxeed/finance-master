@@ -2,32 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../shared/providers/transaction_provider.dart';
 import '../../../shared/providers/account_provider.dart';
 import '../../../shared/providers/portfolio_provider.dart';
-import '../../../core/theme/styles.dart';
 import '../../../shared/models/transaction.dart';
 
 
-class AnalyticsScreen extends ConsumerWidget {
+class AnalyticsScreen extends ConsumerStatefulWidget {
   const AnalyticsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AnalyticsScreen> createState() => _AnalyticsScreenState();
+}
+
+class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
+  String? _selectedAccountId; // null = all accounts
+  int? _selectedMonthIndex; // selected month pill index
+
+  @override
+  Widget build(BuildContext context) {
+    final ref = this.ref;
     final transactions = ref.watch(transactionProvider);
+    final accounts = ref.watch(accountProvider);
     final holdings = ref.watch(holdingsProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 0);
 
     final now = DateTime.now();
 
+    // Filter transactions by selected account for the chart views
+    final filteredForChart = _selectedAccountId == null
+        ? transactions
+        : transactions.where((t) => t.accountId == _selectedAccountId).toList();
+
     // Monthly income/expense for last 12 months (oldest -> newest)
     final List<_MonthData> months = List.generate(12, (i) {
       final m = DateTime(now.year, now.month - (11 - i), 1);
       final label = DateFormat.MMM().format(m);
-      final income = transactions
+      final income = filteredForChart
           .where((t) => t.type == TransactionType.income && t.date.year == m.year && t.date.month == m.month)
           .fold(0.0, (p, e) => p + e.amount);
-      final expense = transactions
+      final expense = filteredForChart
           .where((t) => t.type == TransactionType.expense && t.date.year == m.year && t.date.month == m.month)
           .fold(0.0, (p, e) => p + e.amount);
       return _MonthData(month: label, income: income, expense: expense);
@@ -99,6 +114,30 @@ class AnalyticsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
+
+          // Account selector for chart-specific views
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  const Text('Account:', style: TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButton<String?>(
+                      isExpanded: true,
+                      value: _selectedAccountId,
+                      items: [
+                        const DropdownMenuItem<String?>(value: null, child: Text('All Accounts')),
+                        ...accounts.map((a) => DropdownMenuItem<String?>(value: a.id, child: Text(a.name))).toList()
+                      ],
+                      onChanged: (v) => setState(() => _selectedAccountId = v),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           // Monthly Income vs Expense
           Card(
@@ -199,10 +238,148 @@ class AnalyticsScreen extends ConsumerWidget {
           ),
 
           const SizedBox(height: 24),
-          SizedBox(height: 8),
+
+          // Month selector and inline transaction list (at end of screen)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _selectedMonthIndex == null
+                        ? 'Select a month to view transactions'
+                        : 'Transactions for ${DateFormat.yMMMM().format(DateTime(now.year, now.month - (11 - _selectedMonthIndex!), 1))}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Horizontal month selector
+                  SizedBox(
+                    height: 48,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      itemCount: months.length,
+                      itemBuilder: (context, idx) {
+                        final m = months[idx];
+                        final selected = _selectedMonthIndex == idx;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () => setState(() => _selectedMonthIndex = idx),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: selected ? Theme.of(context).colorScheme.primary : Theme.of(context).dividerColor),
+                                boxShadow: selected
+                                    ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withAlpha((0.16 * 255).round()), blurRadius: 6, offset: const Offset(0, 2))]
+                                    : null,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    m.month,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: selected
+                                          ? Theme.of(context).colorScheme.primary
+                                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 250),
+                                    width: selected ? 24 : 0,
+                                    height: 3,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+    ),
+                          );
+
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Inline transaction list for the selected month
+                  Builder(builder: (context) {
+                    if (_selectedMonthIndex == null) return const SizedBox.shrink();
+                    final selectedMonthDate = DateTime(now.year, now.month - (11 - _selectedMonthIndex!), 1);
+                    final txnsForSelectedMonth = filteredForChart.where((t) => t.date.year == selectedMonthDate.year && t.date.month == selectedMonthDate.month).toList();
+
+                    if (txnsForSelectedMonth.isEmpty) {
+                      return Center(child: Text('No transactions for ${DateFormat.yMMMM().format(selectedMonthDate)}'));
+                    }
+
+                    // Use a shrink-wrapped ListView so it sizes to its children and scrolls with the page
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: txnsForSelectedMonth.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final t = txnsForSelectedMonth[index];
+                        final color = _getTransactionColor(t.type);
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: color.withAlpha((0.1 * 255).round()),
+                            child: Icon(_getTransactionIcon(t.type), color: color),
+                          ),
+                          title: Text(t.category),
+                          subtitle: Text(DateFormat.yMMMd().format(t.date)),
+                          trailing: Text(
+                            '${t.type == TransactionType.income ? '+' : '-'}${currencyFormat.format(t.amount)}',
+                            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () => context.push('/transactions/${t.id}'),
+                        );
+                      },
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
         ],
       ),
     );
+  }
+
+  Color _getTransactionColor(TransactionType type) {
+    switch (type) {
+      case TransactionType.income:
+        return Colors.green;
+      case TransactionType.expense:
+        return Colors.red;
+      case TransactionType.transfer:
+        return Colors.blue;
+    }
+  }
+
+  IconData _getTransactionIcon(TransactionType type) {
+    switch (type) {
+      case TransactionType.income:
+        return Icons.arrow_downward;
+      case TransactionType.expense:
+        return Icons.arrow_upward;
+      case TransactionType.transfer:
+        return Icons.swap_horiz;
+    }
   }
 }
 

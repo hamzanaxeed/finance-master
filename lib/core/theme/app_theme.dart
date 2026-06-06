@@ -19,180 +19,260 @@ class DarkModeNotifier extends StateNotifier<bool> {
 }
 
 class AppTheme {
-  // Central seed color used across light and dark themes
-  static const Color _seedColor = Color(0xFF3B82F6); // indigo-ish blue
+  // Brand color design tokens (Modern Premium Fintech)
+  static const Color _primaryTeal = Color(0xFF0EA5A4);
+  static const double _cornerRadius = 16.0;
 
-  static ThemeData _baseTheme(ColorScheme scheme, Brightness brightness) {
-    final rounded = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
+  // Semantic Slate colors for perfect UI layering
+  static const Color _slate50  = Color(0xFFF8FAFC); // Light Screen Background
+  static const Color _slate100 = Color(0xFFF1F5F9); // Light Borders / Inputs
+  static const Color _slate800 = Color(0xFF1E293B); // Dark Cards / Surfaces
+  static const Color _slate900 = Color(0xFF0F172A); // Dark Screen Background
+
+  static ThemeData _baseTheme(ColorScheme scheme) {
+    final roundedBorder = RoundedRectangleBorder(borderRadius: BorderRadius.circular(_cornerRadius));
 
     return ThemeData(
       useMaterial3: true,
-      brightness: brightness,
+      brightness: scheme.brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.surface, // scaffold background should use surface in latest Material
+      scaffoldBackgroundColor: scheme.surface, // Clean canvas architecture
       primaryColor: scheme.primary,
+
+      // Flat, clean modern App bar
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
+        scrolledUnderElevation: 0, // Prevents sudden color shifts during scrolling
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,
-        toolbarHeight: 56,
+        toolbarHeight: 64,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: scheme.onSurface,
+        ),
+        iconTheme: IconThemeData(color: scheme.onSurface),
       ),
-      textTheme: GoogleFonts.interTextTheme().apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface),
+
+      // Global Typography
+      textTheme: GoogleFonts.interTextTheme(
+          scheme.brightness == Brightness.dark
+              ? ThemeData.dark().textTheme
+              : ThemeData.light().textTheme
+      ).apply(
+        bodyColor: scheme.onSurface,
+        displayColor: scheme.onSurface,
+      ),
       visualDensity: VisualDensity.adaptivePlatformDensity,
 
-      // Buttons
+      // Elevated Buttons
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: scheme.primary,
           foregroundColor: scheme.onPrimary,
-          shape: rounded,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          textStyle: const TextStyle(fontWeight: FontWeight.w600),
+          shape: roundedBorder,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          textStyle: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 15),
+          elevation: 0, // Flat design with solid fills
         ),
       ),
+
+      // Text Buttons
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: scheme.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          textStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
         ),
       ),
+
+      // Outlined Buttons
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: scheme.primary,
-          side: BorderSide(color: scheme.outline),
-          shape: rounded,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          foregroundColor: scheme.onSurface,
+          side: BorderSide(color: scheme.outlineVariant, width: 1.5),
+          shape: roundedBorder,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14),
         ),
       ),
 
       // Floating Action Button
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
+        backgroundColor: scheme.primaryContainer,
+        foregroundColor: scheme.onPrimaryContainer,
+        elevation: 2,
+        hoverElevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
 
-      // Input fields
+      // Input Decoration (Text fields)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        // use surfaceContainerHighest for container background in newer API
-        fillColor: scheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: scheme.primary)),
-        hintStyle: TextStyle(color: scheme.onSurface.withAlpha((0.6 * 255).round())),
+        fillColor: scheme.brightness == Brightness.light ? _slate100 : _slate800,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_cornerRadius),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_cornerRadius),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_cornerRadius),
+          borderSide: BorderSide(color: scheme.primary, width: 2),
+        ),
+        hintStyle: TextStyle(color: scheme.onSurfaceVariant.withOpacity(0.6)),
       ),
 
-      // Cards
+      // Cards with clean borders instead of heavy shadows
       cardTheme: CardThemeData(
-        color: scheme.surface,
-        elevation: 1,
-        shape: rounded,
+        color: scheme.brightness == Brightness.light ? Colors.white : _slate800,
+        elevation: 0,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_cornerRadius),
+          side: BorderSide(color: scheme.outlineVariant, width: 1),
+        ),
         margin: const EdgeInsets.symmetric(vertical: 6),
       ),
 
-      // List tiles
+      // List Tiles
       listTileTheme: ListTileThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: roundedBorder,
+        tileColor: Colors.transparent,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        minLeadingWidth: 0,
       ),
 
-      // Bottom navigation
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: scheme.surface,
-        selectedItemColor: scheme.primary,
-        unselectedItemColor: scheme.onSurface.withAlpha((0.6 * 255).round()),
-        showUnselectedLabels: true,
-        elevation: 4,
-      ),
-
-      // Material 3 NavigationBar (NavigationRail / NavigationBar)
+      // Material 3 Floating Navigation Bar support
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: scheme.surface,
-        indicatorColor: scheme.primary.withAlpha((0.12 * 255).round()),
-        labelTextStyle: MaterialStateProperty.resolveWith((states) {
-          return TextStyle(color: scheme.onSurface, fontSize: 12, fontWeight: FontWeight.w600);
+        elevation: 0,
+        backgroundColor: scheme.brightness == Brightness.light ? Colors.white : _slate800,
+        indicatorColor: scheme.primary.withOpacity(0.12),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final isSelected = states.contains(WidgetState.selected);
+          return GoogleFonts.inter(
+            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          );
         }),
-        iconTheme: MaterialStateProperty.resolveWith((states) {
-          // keep selection logic; use withAlpha for opacity
-          // Warning: MaterialStateProperty is deprecated in some SDKs but still works
-          // for compatibility here.
-          // Use WidgetStateProperty if migrating to newest APIs.
-          // selected state color
-          // Note: can't reference WidgetState here to maintain compatibility.
-          return IconThemeData(color: scheme.onSurface.withAlpha((0.7 * 255).round()));
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final isSelected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+            size: 24,
+          );
         }),
       ),
 
-      // Divider
-      dividerTheme: DividerThemeData(color: scheme.outline.withAlpha((0.6 * 255).round()), thickness: 1),
+      // Dividers
+      dividerTheme: DividerThemeData(
+        color: scheme.outlineVariant,
+        thickness: 1,
+      ),
 
       // Snackbars
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: scheme.surfaceContainerHighest,
-        contentTextStyle: TextStyle(color: scheme.onSurface),
+        backgroundColor: scheme.brightness == Brightness.light ? _slate800 : _slate100,
+        contentTextStyle: TextStyle(color: scheme.brightness == Brightness.light ? Colors.white : _slate900),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
       // Dialogs
-      dialogTheme: DialogThemeData(shape: rounded, backgroundColor: scheme.surface),
-
-      // Card and surface behaviors
-      //surfaceTintColor: scheme.primary,
+      dialogTheme: DialogThemeData(
+        shape: roundedBorder,
+        backgroundColor: scheme.brightness == Brightness.light ? Colors.white : _slate800,
+      ),
     );
   }
 
-
   static ThemeData get lightTheme {
-    final scheme = ColorScheme.fromSeed(seedColor: _seedColor, brightness: Brightness.light);
-    return _baseTheme(scheme, Brightness.light);
+    final baseScheme = ColorScheme.fromSeed(
+      seedColor: _primaryTeal,
+      brightness: Brightness.light,
+    );
+
+    // Inject custom structural light mode values
+    final refinedScheme = baseScheme.copyWith(
+      surface: _slate50,             // Screen canvas
+      surfaceContainer: Colors.white, // Containers & Cards
+      onSurface: _slate900,           // Dark primary text
+      onSurfaceVariant: const Color(0xFF64748B), // Slate 500 secondary text
+      outlineVariant: _slate100,      // Thin line separators
+    );
+
+    return _baseTheme(refinedScheme);
   }
 
   static ThemeData get darkTheme {
-    final scheme = ColorScheme.fromSeed(seedColor: _seedColor, brightness: Brightness.dark);
-    return _baseTheme(scheme, Brightness.dark).copyWith(
-      textTheme: GoogleFonts.interTextTheme(ThemeData(brightness: Brightness.dark).textTheme)
-          .apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface),
+    final baseScheme = ColorScheme.fromSeed(
+      seedColor: _primaryTeal,
+      brightness: Brightness.dark,
     );
+
+    // Inject custom structural dark mode values
+    final refinedScheme = baseScheme.copyWith(
+      surface: _slate900,             // Dark deep canvas
+      surfaceContainer: _slate800,    // Elevated cards
+      onSurface: _slate50,            // Light primary text
+      onSurfaceVariant: const Color(0xFF94A3B8), // Slate 400 secondary text
+      outlineVariant: const Color(0xFF334155),   // Slate 700 dark lines
+    );
+
+    return _baseTheme(refinedScheme);
   }
 
-  // Helper to create a green success SnackBar
+  // Helper to create a premium success SnackBar
   static SnackBar successSnackBar(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 3), SnackBarAction? action}) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w600);
     return SnackBar(
       content: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.white),
+          const Icon(Icons.check_circle_rounded, color: Colors.white, size: 22),
           const SizedBox(width: 12),
-          Expanded(child: Text(message, style: textStyle)),
+          Expanded(
+            child: Text(
+              message,
+              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14),
+            ),
+          ),
         ],
       ),
-      backgroundColor: Colors.green.shade600,
+      backgroundColor: const Color(0xFF10B981), // Emerald 500
       behavior: SnackBarBehavior.floating,
-      elevation: 6,
+      elevation: 4,
       duration: duration,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       action: action,
     );
   }
 
-  // Helper to create a red error SnackBar
+  // Helper to create a premium error SnackBar
   static SnackBar errorSnackBar(BuildContext context, String message,
       {Duration duration = const Duration(seconds: 4), SnackBarAction? action}) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w600);
     return SnackBar(
       content: Row(
         children: [
-          const Icon(Icons.error_outline, color: Colors.white),
+          const Icon(Icons.error_rounded, color: Colors.white, size: 22),
           const SizedBox(width: 12),
-          Expanded(child: Text(message, style: textStyle)),
+          Expanded(
+            child: Text(
+              message,
+              style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14),
+            ),
+          ),
         ],
       ),
-      backgroundColor: Colors.red.shade600,
+      backgroundColor: const Color(0xFFF43F5E), // Rose 500
       behavior: SnackBarBehavior.floating,
-      elevation: 6,
+      elevation: 4,
       duration: duration,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       action: action,
     );
   }

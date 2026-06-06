@@ -25,7 +25,8 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Finance Master'),
+        title: const Text('Finance Master', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
 
         actions: [
           IconButton(
@@ -45,6 +46,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ],
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -151,28 +153,7 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: 16),
 
             // Quick Links
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.5,
-              children: [
-                QuickLinkCard(
-                  title: 'Transactions',
-                  icon: Icons.swap_horiz,
-                  count: '${transactions.length} total',
-                  onTap: () => context.push('/transactions'),
-                ),
-                QuickLinkCard(
-                  title: 'Analytics',
-                  icon: Icons.analytics,
-                  count: 'Insights',
-                  onTap: () => context.push('/analytics'),
-                ),
-              ],
-            ),
+
           ],
         ),
       ),

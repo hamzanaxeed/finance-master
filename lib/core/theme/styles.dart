@@ -21,3 +21,16 @@ class AppSpacing {
   }
 }
 
+// Central radii used across components to keep the UI cohesive
+class AppRadius {
+  static const double small = 8.0;
+  static const double medium = 12.0;
+  static const double large = 16.0;
+}
+
+// Shared elevation values
+class AppElevation {
+  static const double card = 2.0;
+  static const double appBar = 1.0;
+  static const double bottomNav = 6.0;
+}
