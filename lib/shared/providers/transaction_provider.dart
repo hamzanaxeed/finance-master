@@ -9,7 +9,8 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
   }
 
   void addTransaction(Transaction transaction) {
-    state = [...state, transaction];
+    // insert newest transactions at the beginning so consumers see newest-first by default
+    state = [transaction, ...state];
     _saveTransactions();
   }
 
@@ -155,6 +156,8 @@ extension on TransactionNotifier {
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
       state = decoded.map((e) => Transaction.fromJson(e as Map<String, dynamic>)).toList();
+      // ensure newest-first ordering
+      state.sort((a, b) => b.date.compareTo(a.date));
     } catch (_) {
       // ignore and keep empty state
     }

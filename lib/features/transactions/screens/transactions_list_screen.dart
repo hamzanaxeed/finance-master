@@ -14,6 +14,7 @@ class TransactionsListScreen extends ConsumerStatefulWidget {
 
 class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen> {
   TransactionType? _filterType;
+  String _sortOption = 'date_desc'; // date_desc, date_asc, amount_desc, amount_asc
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,25 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
     final filteredTransactions = _filterType == null
         ? allTransactions
         : allTransactions.where((t) => t.type == _filterType).toList();
+
+    // apply sorting to a local list (do not modify provider state)
+    final displayedTransactions = List.of(filteredTransactions);
+    switch (_sortOption) {
+      case 'date_desc':
+        displayedTransactions.sort((a, b) => b.date.compareTo(a.date));
+        break;
+      case 'date_asc':
+        displayedTransactions.sort((a, b) => a.date.compareTo(b.date));
+        break;
+      case 'amount_desc':
+        displayedTransactions.sort((a, b) => b.amount.compareTo(a.amount));
+        break;
+      case 'amount_asc':
+        displayedTransactions.sort((a, b) => a.amount.compareTo(b.amount));
+        break;
+      default:
+        displayedTransactions.sort((a, b) => b.date.compareTo(a.date));
+    }
 
     final monthlyIncome = ref.watch(monthlyIncomeProvider);
     final monthlyExpense = ref.watch(monthlyExpenseProvider);
@@ -43,6 +63,17 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => context.push('/transactions/add'),
+          ),
+          PopupMenuButton<String>(
+            tooltip: 'Sort',
+            icon: const Icon(Icons.sort),
+            onSelected: (v) => setState(() => _sortOption = v),
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'date_desc', child: Text('Date: Newest')),
+              const PopupMenuItem(value: 'date_asc', child: Text('Date: Oldest')),
+              const PopupMenuItem(value: 'amount_desc', child: Text('Amount: High → Low')),
+              const PopupMenuItem(value: 'amount_asc', child: Text('Amount: Low → High')),
+            ],
           ),
         ],
       ),
@@ -107,7 +138,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: filteredTransactions.isEmpty
+            child: displayedTransactions.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -130,9 +161,9 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filteredTransactions.length,
+                    itemCount: displayedTransactions.length,
                     itemBuilder: (context, index) {
-                      final transaction = filteredTransactions[index];
+                      final transaction = displayedTransactions[index];
                       return Card(
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
