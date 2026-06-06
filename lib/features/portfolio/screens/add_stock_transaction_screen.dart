@@ -5,7 +5,12 @@ import '../../../shared/models/portfolio.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 
 class AddStockTransactionScreen extends ConsumerStatefulWidget {
-  const AddStockTransactionScreen({super.key});
+  final String? initialSymbol;
+  final StockTransactionType? initialType;
+  final double? initialPrice;
+  final double? initialQuantity;
+
+  const AddStockTransactionScreen({super.key, this.initialSymbol, this.initialType, this.initialPrice, this.initialQuantity});
 
   @override
   ConsumerState<AddStockTransactionScreen> createState() => _AddStockTransactionScreenState();
@@ -28,6 +33,17 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
     _priceController.dispose();
     _commissionController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Prefill if initial values were provided
+    final w = widget as AddStockTransactionScreen;
+    if (w.initialSymbol != null) _symbolController.text = w.initialSymbol!.toUpperCase();
+    if (w.initialPrice != null) _priceController.text = w.initialPrice!.toStringAsFixed(2);
+    if (w.initialQuantity != null) _quantityController.text = w.initialQuantity!.toStringAsFixed(2);
+    if (w.initialType != null) _selectedType = w.initialType!;
   }
 
   void _handleSubmit() {

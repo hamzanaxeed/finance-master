@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/models/portfolio.dart';
+import 'add_stock_transaction_screen.dart';
+import 'package:flutter/services.dart';
 
 class HoldingDetailScreen extends ConsumerWidget {
   final String symbol;
@@ -28,83 +30,73 @@ class HoldingDetailScreen extends ConsumerWidget {
       );
     }
 
+    // Promote nullable holding to non-null local to satisfy analyzer
+    final sh = holding!;
+
     final transactions = ref.watch(stockTransactionProvider).where((t) => t.symbol == symbol).toList();
     final priceHistory = ref.watch(priceHistoryProvider)[symbol] ?? [];
 
-    DateTime? firstTxnDate;
+    // firstTxnDate not used currently
+    // DateTime? firstTxnDate;
     if (transactions.isNotEmpty) {
-      firstTxnDate = transactions.map((t) => t.date).reduce((a, b) => a.isBefore(b) ? a : b);
+      // keep logic available for future use
+      // final _firstTxnDate = transactions.map((t) => t.date).reduce((a, b) => a.isBefore(b) ? a : b);
     }
 
-    final latestPrice = priceHistory.isNotEmpty ? priceHistory.last.price : holding.currentPrice;
-    final displayCurrentValue = holding.quantity * latestPrice;
-    final displayProfitLoss = displayCurrentValue - holding.totalInvestment;
-    final displayProfitLossPercent = holding.totalInvestment > 0 ? (displayProfitLoss / holding.totalInvestment) * 100 : 0;
+    final latestPrice = priceHistory.isNotEmpty ? priceHistory.last.price : sh.currentPrice;
+    final displayCurrentValue = sh.quantity * latestPrice;
+    final displayProfitLoss = displayCurrentValue - sh.totalInvestment;
+    final displayProfitLossPercent = sh.totalInvestment > 0 ? (displayProfitLoss / sh.totalInvestment) * 100 : 0;
     final isPositive = displayProfitLoss >= 0;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(holding.symbol),
+        title: Text(sh.symbol),
         actions: [
-          IconButton(
-            tooltip: 'Edit share',
-            icon: const Icon(Icons.edit),
-            onPressed: () async {
-              final controller = TextEditingController(text: holding!.companyName);
-              final res = await showDialog<String?>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Edit Share'),
-                    content: TextField(
-                      controller: controller,
-                      decoration: const InputDecoration(labelText: 'Company name'),
-                    ),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-                      ElevatedButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('Save')),
-                    ],
-                  );
-                },
-              );
-              if (res != null && res.isNotEmpty) {
-                ref.read(holdingMetaProvider.notifier).updateCompanyName(symbol, res);
-              }
-            },
-          ),
-          IconButton(
-            tooltip: 'Update current price',
-            icon: const Icon(Icons.currency_rupee),
-            onPressed: () async {
-              final controller = TextEditingController();
-              final res = await showDialog<double?>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Update Current Price'),
-                    content: TextField(
-                      controller: controller,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(labelText: 'Price'),
-                    ),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-                      ElevatedButton(
-                        onPressed: () {
-                          final v = double.tryParse(controller.text.trim());
-                          Navigator.pop(context, v);
-                        },
-                        child: const Text('Update'),
+          PopupMenuButton<String>(
+            tooltip: 'More',
+            onSelected: (value) async {
+              if (value == 'share') {
+                final txt = '${sh.companyName} (${sh.symbol}) - Current Rs ${latestPrice.toStringAsFixed(2)}';
+                await Clipboard.setData(ClipboardData(text: txt));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share text copied to clipboard')));
+              } else if (value == 'edit') {
+                final controller = TextEditingController(text: sh.companyName);
+                final res = await showDialog<String?>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Edit Share'),
+                      content: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(labelText: 'Company name'),
                       ),
-                    ],
-                  );
-                },
-              );
-              if (res != null) {
-                final pp = PricePoint(time: DateTime.now(), price: res);
-                ref.read(priceHistoryProvider.notifier).addPricePoint(symbol, pp);
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                        ElevatedButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('Save')),
+                      ],
+                    );
+                  },
+                );
+                if (res != null && res.isNotEmpty) {
+                  ref.read(holdingMetaProvider.notifier).updateCompanyName(symbol, res);
+                }
+              } else if (value == 'buy' || value == 'sell') {
+                final type = value == 'buy' ? StockTransactionType.buy : StockTransactionType.sell;
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => AddStockTransactionScreen(
+                      initialSymbol: sh.symbol,
+                      initialType: type,
+                      initialPrice: latestPrice,
+                      initialQuantity: 1,
+                    )));
               }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'share', child: Text('Share')),
+              const PopupMenuItem(value: 'edit', child: Text('Edit')),
+              const PopupMenuItem(value: 'buy', child: Text('Buy share')),
+              const PopupMenuItem(value: 'sell', child: Text('Sell share')),
+            ],
           ),
         ],
       ),
@@ -119,19 +111,19 @@ class HoldingDetailScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(holding.companyName, style: Theme.of(context).textTheme.titleLarge),
+                    Text(sh.companyName, style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${holding.quantity} shares', style: Theme.of(context).textTheme.bodyMedium),
+                        Text('${sh.quantity} shares', style: Theme.of(context).textTheme.bodyMedium),
                         Text(currencyFormat.format(displayCurrentValue), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                       ],
                     ),
                     const Divider(height: 24),
-                    _InfoRow('Avg Price', currencyFormat.format(holding.averagePrice)),
+                    _InfoRow('Avg Price', currencyFormat.format(sh.averagePrice)),
                     _InfoRow('Current Price', currencyFormat.format(latestPrice)),
-                    _InfoRow('Total Investment', currencyFormat.format(holding.totalInvestment)),
+                    _InfoRow('Total Investment', currencyFormat.format(sh.totalInvestment)),
                     _InfoRow('Current Value', currencyFormat.format(displayCurrentValue)),
                     _InfoRow('Profit/Loss', '${displayProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(displayProfitLoss)}', valueColor: isPositive ? Colors.green : Colors.red),
                     _InfoRow('Profit/Loss %', '${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(2)}%', valueColor: isPositive ? Colors.green : Colors.red),
@@ -149,6 +141,45 @@ class HoldingDetailScreen extends ConsumerWidget {
                     height: 200,
                     child: _buildChart(context, priceHistory),
                   ),
+            const SizedBox(height: 8),
+            // Moved update current price button here (previously in AppBar)
+            Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.currency_rupee),
+                label: const Text('Update current price'),
+                onPressed: () async {
+                  final controller = TextEditingController();
+                  final res = await showDialog<double?>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Update Current Price'),
+                        content: TextField(
+                          controller: controller,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: const InputDecoration(labelText: 'Price'),
+                        ),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                          ElevatedButton(
+                            onPressed: () {
+                              final v = double.tryParse(controller.text.trim());
+                              Navigator.pop(context, v);
+                            },
+                            child: const Text('Update'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (res != null) {
+                    final pp = PricePoint(time: DateTime.now(), price: res);
+                    ref.read(priceHistoryProvider.notifier).addPricePoint(symbol, pp);
+                  }
+                },
+              ),
+            ),
             const SizedBox(height: 16),
             Text('Transactions', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
