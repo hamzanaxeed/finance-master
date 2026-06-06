@@ -6,6 +6,7 @@ import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/models/portfolio.dart';
 import 'add_stock_transaction_screen.dart';
 import 'package:flutter/services.dart';
+import 'dividend/add_dividend_screen.dart';
 
 class HoldingDetailScreen extends ConsumerWidget {
   final String symbol;
@@ -56,6 +57,15 @@ class HoldingDetailScreen extends ConsumerWidget {
           PopupMenuButton<String>(
             tooltip: 'More',
             onSelected: (value) async {
+              if (value == 'add_dividend') {
+                // Open add dividend screen with prefilled company/symbol
+                await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => AddDividendScreen(
+                      initialSymbol: sh.symbol,
+                      initialCompanyName: sh.companyName,
+                      initialQuantity: sh.quantity,
+                    )));
+                return;
+              }
               if (value == 'copy data') {
                 final txt = '${sh.companyName} (${sh.symbol}) - ${sh.quantity} @ Rs ${sh.averagePrice.toStringAsFixed(2)}, current price Rs ${latestPrice.toStringAsFixed(2)}, Total P/L ${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(2)}%';
                 await Clipboard.setData(ClipboardData(text: txt));
@@ -143,6 +153,7 @@ class HoldingDetailScreen extends ConsumerWidget {
               }
             },
             itemBuilder: (context) => [
+              const PopupMenuItem(value: 'add_dividend', child: Text('Add dividend')),
               const PopupMenuItem(value: 'copy data', child: Text('copy data')),
               const PopupMenuItem(value: 'edit', child: Text('Edit')),
               const PopupMenuItem(value: 'buy', child: Text('Buy share')),

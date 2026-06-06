@@ -38,11 +38,14 @@ class PortfolioScreen extends ConsumerWidget {
                 context.push('/portfolio/transactions');
               } else if (value == 'transfer') {
                 _showTransferDialog(context, ref);
+              } else if (value == 'manage_cash') {
+                _showManageCashDialog(context, ref);
               }
             },
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'transactions', child: Text('Transactions')),
               PopupMenuItem(value: 'transfer', child: Text('Transfer')),
+              PopupMenuItem(value: 'manage_cash', child: Text('Manage cash')),
             ],
           ),
         ],
@@ -285,6 +288,80 @@ class PortfolioScreen extends ConsumerWidget {
                 Navigator.pop(context);
               },
               child: const Text('Transfer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showManageCashDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        bool add = true; // true = add cash, false = remove
+        final _formKey = GlobalKey<FormState>();
+        final _amountCtrl = TextEditingController();
+
+        return AlertDialog(
+          title: const Text('Manage portfolio cash'),
+          content: StatefulBuilder(builder: (context, setState) {
+            return Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Add cash'),
+                          selected: add,
+                          onSelected: (v) => setState(() => add = true),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ChoiceChip(
+                          label: const Text('Remove cash'),
+                          selected: !add,
+                          onSelected: (v) => setState(() => add = false),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _amountCtrl,
+                    decoration: const InputDecoration(labelText: 'Amount', prefixText: 'Rs ', border: OutlineInputBorder()),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Required';
+                      final a = double.tryParse(v);
+                      if (a == null || a <= 0) return 'Enter valid amount';
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                if (!(_formKey.currentState?.validate() ?? false)) return;
+                final amount = double.parse(_amountCtrl.text);
+                final actions = ref.read(portfolioCashActionsProvider);
+                if (add) {
+                  actions.deposit(amount);
+                } else {
+                  actions.withdraw(amount);
+                }
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(add ? 'Cash added' : 'Cash removed')));
+                Navigator.pop(context);
+              },
+              child: const Text('Apply'),
             ),
           ],
         );

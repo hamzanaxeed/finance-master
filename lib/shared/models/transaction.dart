@@ -16,6 +16,7 @@ class Transaction {
   final String? toAccountId;
   final DateTime date;
   final String? notes;
+  final bool hiddenFromGlobal; // when true transaction is not shown in global transactions list
   final DateTime createdAt;
 
   Transaction({
@@ -27,6 +28,7 @@ class Transaction {
     this.toAccountId,
     required this.date,
     this.notes,
+    this.hiddenFromGlobal = false,
     DateTime? createdAt,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now();
@@ -39,6 +41,7 @@ class Transaction {
     String? toAccountId,
     DateTime? date,
     String? notes,
+    bool? hiddenFromGlobal,
   }) {
     return Transaction(
       id: id,
@@ -49,6 +52,7 @@ class Transaction {
       toAccountId: toAccountId ?? this.toAccountId,
       date: date ?? this.date,
       notes: notes ?? this.notes,
+      hiddenFromGlobal: hiddenFromGlobal ?? this.hiddenFromGlobal,
       createdAt: createdAt,
     );
   }
@@ -63,6 +67,7 @@ class Transaction {
       'toAccountId': toAccountId,
       'date': date.toIso8601String(),
       'notes': notes,
+      'hiddenFromGlobal': hiddenFromGlobal,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -77,6 +82,7 @@ class Transaction {
       toAccountId: json['toAccountId'] as String?,
       date: DateTime.parse(json['date'] as String),
       notes: json['notes'] as String?,
+      hiddenFromGlobal: (json['hiddenFromGlobal'] as bool?) ?? false,
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }

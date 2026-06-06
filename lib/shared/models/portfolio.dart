@@ -103,6 +103,7 @@ class StockTransaction {
 class Dividend {
   final String id;
   final String symbol;
+  final String companyName;
   final double amountPerShare;
   final double totalReceived;
   final DateTime date;
@@ -110,6 +111,7 @@ class Dividend {
   Dividend({
     String? id,
     required this.symbol,
+    required this.companyName,
     required this.amountPerShare,
     required this.totalReceived,
     required this.date,
@@ -119,6 +121,7 @@ class Dividend {
     return {
       'id': id,
       'symbol': symbol,
+      'companyName': companyName,
       'amountPerShare': amountPerShare,
       'totalReceived': totalReceived,
       'date': date.toIso8601String(),
@@ -129,6 +132,7 @@ class Dividend {
     return Dividend(
       id: json['id'] as String?,
       symbol: json['symbol'] as String,
+      companyName: (json['companyName'] as String?) ?? (json['symbol'] as String),
       amountPerShare: (json['amountPerShare'] as num).toDouble(),
       totalReceived: (json['totalReceived'] as num).toDouble(),
       date: DateTime.parse(json['date'] as String),

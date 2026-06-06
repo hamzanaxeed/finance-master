@@ -435,6 +435,25 @@ final portfolioTransferProvider = StateNotifierProvider<PortfolioTransferNotifie
   return PortfolioTransferNotifier(ref);
 });
 
+// Helper provider: allow mutating portfolio cash without creating a PortfolioTransfer record.
+// This is intentionally lightweight to support 'manage cash' UI that directly adjusts portfolio cash.
+final portfolioCashActionsProvider = Provider<_PortfolioCashActions>((ref) {
+  return _PortfolioCashActions(ref);
+});
+
+class _PortfolioCashActions {
+  final Ref ref;
+  _PortfolioCashActions(this.ref);
+
+  void deposit(double amount) {
+    ref.read(_portfolioCashProvider.notifier).deposit(amount);
+  }
+
+  void withdraw(double amount) {
+    ref.read(_portfolioCashProvider.notifier).withdraw(amount);
+  }
+}
+
 // Total invested into portfolio = sum of transfers into portfolio - sum out
 final portfolioTotalInvestedProvider = Provider<double>((ref) {
   final transfers = ref.watch(portfolioTransferProvider);

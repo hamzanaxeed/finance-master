@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../shared/providers/portfolio_provider.dart';
+import 'dividend/add_dividend_screen.dart';
 
 class DividendsScreen extends ConsumerWidget {
   const DividendsScreen({super.key});
@@ -14,7 +15,21 @@ class DividendsScreen extends ConsumerWidget {
     final totalDividends = dividends.fold(0.0, (sum, d) => sum + d.totalReceived);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dividends')),
+      appBar: AppBar(title: const Text('Dividends'), actions: [
+        PopupMenuButton<String>(
+          onSelected: (v) async {
+            if (v == 'add') {
+              await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const AddDividendScreen()));
+            }
+          },
+          itemBuilder: (ctx) => [const PopupMenuItem(value: 'add', child: Text('Add dividend'))],
+        )
+      ]),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => const AddDividendScreen())),
+        tooltip: 'Add dividend',
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           Container(
@@ -27,11 +42,11 @@ class DividendsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Total Dividends', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
+                Text('Total Dividends', style: TextStyle(color: Colors.white.withAlpha((0.9 * 255).round()), fontSize: 14)),
                 const SizedBox(height: 8),
                 Text(currencyFormat.format(totalDividends), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text('Year to Date', style: TextStyle(color: Colors.white.withOpacity(0.9))),
+                Text('Year to Date', style: TextStyle(color: Colors.white.withAlpha((0.9 * 255).round()))),
               ],
             ),
           ),
@@ -50,9 +65,23 @@ class DividendsScreen extends ConsumerWidget {
                             backgroundColor: Colors.green,
                             child: Icon(Icons.monetization_on, color: Colors.white),
                           ),
-                          title: Text(dividend.symbol),
+                          title: Text('${dividend.companyName} (${dividend.symbol})'),
                           subtitle: Text('Rs ${dividend.amountPerShare.toStringAsFixed(2)} per share\n${DateFormat.yMMMd().format(dividend.date)}'),
-                          trailing: Text(currencyFormat.format(dividend.totalReceived), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(currencyFormat.format(dividend.totalReceived), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                              PopupMenuButton<String>(
+                                onSelected: (v) {
+                                  if (v == 'delete') {
+                                    ref.read(dividendProvider.notifier).deleteDividend(dividend.id);
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dividend deleted')));
+                                  }
+                                },
+                                itemBuilder: (ctx) => [const PopupMenuItem(value: 'delete', child: Text('Delete'))],
+                              )
+                            ],
+                          ),
                           isThreeLine: true,
                         ),
                       );

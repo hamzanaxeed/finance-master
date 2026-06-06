@@ -18,7 +18,17 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final allTransactions = ref.watch(transactionProvider);
+    // Exclude transactions that are intentionally hidden from the global list (e.g., dividend-related entries)
+    final allTransactions = ref.watch(transactionProvider).where((t) {
+      // defensive: some items may not have the flag or may be older data; treat missing/invalid as visible
+      try {
+        final v = (t as dynamic).hiddenFromGlobal;
+        if (v is bool) return v == false;
+        return true;
+      } catch (_) {
+        return true;
+      }
+    }).toList();
     final filteredTransactions = _filterType == null
         ? allTransactions
         : allTransactions.where((t) => t.type == _filterType).toList();
