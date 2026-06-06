@@ -54,6 +54,15 @@ class MoreScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
             ),
           ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.category),
+              title: const Text('Manage Categories'),
+              subtitle: const Text('Add or remove transaction categories'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/manage-categories'),
+            ),
+          ),
         ],
       ),
     );

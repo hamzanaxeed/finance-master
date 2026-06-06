@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/models/portfolio.dart';
 import '../../../shared/providers/portfolio_provider.dart';
+import '../../../shared/providers/portfolio_provider.dart' as _pp show holdingMetaProvider;
+import '../../../shared/providers/portfolio_provider.dart' as pp;
 
 class AddStockTransactionScreen extends ConsumerStatefulWidget {
   final String? initialSymbol;
@@ -22,6 +24,7 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
   final _quantityController = TextEditingController();
   final _priceController = TextEditingController();
   final _commissionController = TextEditingController(text: '0');
+  final _companyNameController = TextEditingController();
 
   StockTransactionType _selectedType = StockTransactionType.buy;
   DateTime _selectedDate = DateTime.now();
@@ -32,6 +35,7 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
     _quantityController.dispose();
     _priceController.dispose();
     _commissionController.dispose();
+    _companyNameController.dispose();
     super.dispose();
   }
 
@@ -60,6 +64,11 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
       // Use notifier which now returns a Future<bool> indicating success (insufficient funds when buying)
       ref.read(stockTransactionProvider.notifier).addTransaction(transaction).then((success) {
         if (success) {
+          // save company name to holding meta if provided
+          final company = _companyNameController.text.trim();
+          if (company.isNotEmpty) {
+            ref.read(pp.holdingMetaProvider.notifier).updateCompanyName(transaction.symbol, company);
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Transaction added successfully')),
           );
@@ -111,6 +120,12 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
               decoration: const InputDecoration(labelText: 'Symbol', border: OutlineInputBorder()),
               textCapitalization: TextCapitalization.characters,
               validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+            ),
+            const SizedBox(height: 16),
+            // Optional company name for the symbol (will be saved to holding meta)
+            TextFormField(
+              controller: _companyNameController,
+              decoration: const InputDecoration(labelText: 'Company name (optional)', border: OutlineInputBorder()),
             ),
             const SizedBox(height: 16),
             TextFormField(

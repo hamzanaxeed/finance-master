@@ -30,11 +30,13 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   }
 
   List<String> _getCategories() {
+    // dynamic categories from provider
+    final cats = ref.read(categoryProvider);
     switch (_selectedType) {
       case TransactionType.income:
-        return TransactionCategories.incomeCategories;
+        return cats.income;
       case TransactionType.expense:
-        return TransactionCategories.expenseCategories;
+        return cats.expense;
       case TransactionType.transfer:
         return ['Transfer'];
     }
@@ -171,20 +173,45 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               },
             ),
             const SizedBox(height: 16),
+            // Category selector with option to add new category inline
             DropdownButtonFormField<String>(
-              initialValue: _selectedCategory,
+              value: _selectedCategory,
               decoration: const InputDecoration(
                 labelText: 'Category',
                 border: OutlineInputBorder(),
               ),
-              items: _getCategories().map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() => _selectedCategory = value);
+              items: [
+                ..._getCategories().map((category) {
+                  return DropdownMenuItem(value: category, child: Text(category));
+                }),
+                const DropdownMenuItem(value: '__add_new__', child: Text('Add new category...')),
+              ],
+              onChanged: (value) async {
+                if (value == '__add_new__') {
+                  final name = await showDialog<String?>(
+                    context: context,
+                    builder: (context) {
+                      final _ctrl = TextEditingController();
+                      return AlertDialog(
+                        title: const Text('Add category'),
+                        content: TextField(
+                          controller: _ctrl,
+                          decoration: const InputDecoration(labelText: 'Category name'),
+                        ),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                          ElevatedButton(onPressed: () => Navigator.pop(context, _ctrl.text.trim()), child: const Text('Add')),
+                        ],
+                      );
+                    },
+                  );
+                  if (name != null && name.isNotEmpty) {
+                    await ref.read(categoryProvider.notifier).addCategory(_selectedType, name);
+                    setState(() => _selectedCategory = name);
+                  }
+                } else {
+                  setState(() => _selectedCategory = value);
+                }
               },
               validator: (value) => value == null ? 'Please select category' : null,
             ),

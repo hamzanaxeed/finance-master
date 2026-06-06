@@ -17,6 +17,7 @@ import '../../features/portfolio/screens/corporate_actions_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
+import '../../features/more/screens/manage_categories_screen.dart';
 import '../../shared/widgets/bottom_navigation.dart';
 import '../../features/portfolio/screens/portfolio_holding_detail_screen.dart';
 
@@ -44,6 +45,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/transactions',
             builder: (context, state) => const TransactionsListScreen(),
+          ),
+          GoRoute(
+            path: '/manage-categories',
+            builder: (context, state) => const ManageCategoriesScreen(),
           ),
           GoRoute(
             path: '/more',
