@@ -10,15 +10,19 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final holdings = ref.watch(holdingsProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
+    // height of the footer spacer so the FAB doesn't cover the last item
+    final footerHeight = MediaQuery.of(context).padding.bottom + 88.0;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Holdings')),
       body: holdings.isEmpty
           ? const Center(child: Text('No holdings'))
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: holdings.length,
+              // keep normal internal padding and append a footer spacer as the final item
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+              itemCount: holdings.length + 1,
               itemBuilder: (context, index) {
+                if (index == holdings.length) return SizedBox(height: footerHeight);
                 final holding = holdings[index];
                 final isPositive = holding.profitLoss >= 0;
                 return Card(
@@ -28,6 +32,7 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

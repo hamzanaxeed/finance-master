@@ -56,6 +56,9 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
     final monthlyExpense = ref.watch(monthlyExpenseProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 0);
 
+    // add extra bottom padding so content isn't hidden by the floating action button
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 88.0;
+
     final uri = GoRouterState.of(context).uri;
     final fromNav = uri.queryParameters['from'] == 'nav';
 
@@ -207,7 +210,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding),
                     itemCount: displayedTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = displayedTransactions[index];
