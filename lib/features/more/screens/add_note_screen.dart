@@ -12,6 +12,7 @@ class AddNoteScreen extends ConsumerStatefulWidget {
   ConsumerState<AddNoteScreen> createState() => _AddNoteScreenState();
 }
 
+
 class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _textCtrl;

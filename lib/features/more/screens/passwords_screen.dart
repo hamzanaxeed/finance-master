@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:wealthtracker/features/more/screens/add_password_screen.dart';
 import '../../../shared/providers/passwords_provider.dart';
+import '../../../shared/providers/auth_provider.dart';
 import '../../../shared/models/password_entry.dart';
 
 class PasswordsScreen extends ConsumerStatefulWidget {
@@ -17,11 +18,33 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
   String _query = '';
   bool _sortAz = true; // true: A-Z by appName, false: Z-A
   bool _showOnlyWithNote = false;
+  bool _authChecked = false;
+  bool _authed = false;
 
   @override
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
   }
 
   List<PasswordEntry> _applyFilters(List<PasswordEntry> src) {
@@ -42,7 +65,7 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
       isScrollControlled: true,
       builder: (ctx) {
         return StatefulBuilder(builder: (ctx, setState) {
-          return Padding(
+          return SingleChildScrollView(
             padding: MediaQuery.of(ctx).viewInsets.add(const EdgeInsets.all(16)),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
               ListTile(
@@ -60,60 +83,57 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
               const SizedBox(height: 8),
               Row(children: [Text('Password:', style: Theme.of(context).textTheme.bodyLarge), const SizedBox(width: 8), Expanded(child: Text(obscure ? '••••••••' : e.password, style: const TextStyle(fontWeight: FontWeight.bold)))]),
               const SizedBox(height: 8),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Actions: wrap buttons to multiple lines if needed, show delete aligned to the right below
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        FilledButton.icon(
-                          onPressed: () {
-                            setState(() => obscure = !obscure);
-                          },
-                          icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
-                          label: Text(obscure ? 'Reveal' : 'Hide'),
-                        ),
-                        FilledButton.icon(
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(text: e.password));
-                            Navigator.pop(ctx);
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password copied')));
-                          },
-                          icon: const Icon(Icons.copy),
-                          label: const Text('Copy'),
-                        ),
-                        FilledButton.icon(
-                          onPressed: () async {
-                            await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPasswordScreen(entry: e)));
-                          },
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Edit'),
-                        ),
-                      ],
-                    ),
+                  FilledButton.icon(
+                    onPressed: () {
+                      setState(() => obscure = !obscure);
+                    },
+                    icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
+                    label: Text(obscure ? 'Reveal' : 'Hide'),
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextButton(
-                      onPressed: () async {
-                        final confirmed = await showDialog<bool?>(context: context, builder: (dctx) => AlertDialog(title: const Text('Delete'), content: const Text('Delete this entry?'), actions: [TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Delete'))]));
-                        if (confirmed == true) {
-                          await ref.read(passwordsProvider.notifier).delete(e.id);
-                          Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Entry deleted')));
-                        }
-                      },
-                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                    ),
+                  FilledButton.icon(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: e.password));
+                      Navigator.pop(ctx);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password copied')));
+                    },
+                    icon: const Icon(Icons.copy),
+                    label: const Text('Copy'),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () async {
+                      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPasswordScreen(entry: e)));
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit'),
                   ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(20),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool?>(context: context, builder: (dctx) => AlertDialog(title: const Text('Delete'), content: const Text('Delete this entry?'), actions: [TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Delete'))]));
+                      if (confirmed == true) {
+                        await ref.read(passwordsProvider.notifier).delete(e.id);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Entry deleted')));
+                      }
+                    },
+                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               if (e.note != null && e.note!.isNotEmpty) ...[
@@ -133,6 +153,31 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
   Widget build(BuildContext context) {
     final entries = ref.watch(passwordsProvider);
     final filtered = _applyFilters(entries);
+
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Passwords')),
+        body: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text('Locked', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('Authenticate to view passwords.'),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () async {
+                final ok = await ref.read(biometricProvider.notifier).authenticate();
+                if (ok) setState(() => _authed = true);
+              },
+              icon: const Icon(Icons.fingerprint),
+              label: const Text('Unlock'),
+            ),
+          ]),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(

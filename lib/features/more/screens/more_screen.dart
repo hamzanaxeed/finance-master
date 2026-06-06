@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../shared/providers/auth_provider.dart';
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
@@ -48,13 +49,27 @@ class MoreScreen extends ConsumerWidget {
             ),
           ),
           Card(
-            child: ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('About'),
-              subtitle: const Text('WealthTracker v1.0.0'),
-              trailing: const Icon(Icons.chevron_right),
+            child: Consumer(
+              builder: (ctx, ref, _) {
+                final enabled = ref.watch(biometricProvider);
+                return SwitchListTile(
+                  title: const Text('Biometric lock'),
+                  secondary: const Icon(Icons.fingerprint),
+                  value: enabled,
+                  onChanged: (val) async {
+                    // perform toggle and show result in a SnackBar
+                    final msg = await ref.read(biometricProvider.notifier).toggle();
+                    if (msg == null) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
+                    } else {
+                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Failed: $msg')));
+                    }
+                  },
+                );
+              },
             ),
           ),
+
           Card(
             child: ListTile(
               leading: const Icon(Icons.category),

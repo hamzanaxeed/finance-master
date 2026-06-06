@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import '../../../shared/providers/notes_provider.dart';
+import '../../../shared/providers/auth_provider.dart';
 import 'add_note_screen.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
@@ -16,11 +16,34 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   final TextEditingController _searchCtrl = TextEditingController();
   String _query = '';
   bool _sortNewestFirst = true;
+  bool _authChecked = false;
+  bool _authed = false;
 
   @override
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check biometric auth if enabled
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
   }
 
   List notesFiltered(List src) {
@@ -37,6 +60,31 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   Widget build(BuildContext context) {
     final notes = ref.watch(notesProvider);
     final filtered = notesFiltered(notes);
+
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Notes')),
+        body: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text('Locked', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('Authenticate to view notes.'),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () async {
+                final ok = await ref.read(biometricProvider.notifier).authenticate();
+                if (ok) setState(() => _authed = true);
+              },
+              icon: const Icon(Icons.fingerprint),
+              label: const Text('Unlock'),
+            ),
+          ]),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +140,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.08),
+                              color: Colors.red.withAlpha(20),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: IconButton(
