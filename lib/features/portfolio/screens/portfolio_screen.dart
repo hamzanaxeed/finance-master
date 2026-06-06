@@ -31,9 +31,19 @@ class PortfolioScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Portfolio'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => context.push('/portfolio/add-transaction'),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'transactions') {
+                context.push('/portfolio/transactions');
+              } else if (value == 'transfer') {
+                _showTransferDialog(context, ref);
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'transactions', child: Text('Transactions')),
+              PopupMenuItem(value: 'transfer', child: Text('Transfer')),
+            ],
           ),
         ],
       ),
@@ -164,31 +174,14 @@ class PortfolioScreen extends ConsumerWidget {
                     },
                   ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => context.push('/portfolio/transactions'),
-                      icon: const Icon(Icons.receipt),
-                      label: const Text('Transactions'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  OutlinedButton.icon(
-                    onPressed: () => _showTransferDialog(context, ref),
-                    icon: const Icon(Icons.swap_horiz),
-                    label: const Text('Transfer'),
-                  ),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/portfolio/add-transaction'),
+        tooltip: 'Add transaction',
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

@@ -97,4 +97,3 @@ class ManageCategoriesScreen extends ConsumerWidget {
     );
   }
 }
-

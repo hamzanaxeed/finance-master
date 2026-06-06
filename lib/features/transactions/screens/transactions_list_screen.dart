@@ -60,10 +60,8 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                 : IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.go('/'))),
         title: const Text('Transactions'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => context.push('/transactions/add'),
-          ),
+          // Add button moved to floating action button
+          // filter moved to inline selector below (replaced chips)
           PopupMenuButton<String>(
             tooltip: 'Sort',
             icon: const Icon(Icons.sort),
@@ -76,6 +74,11 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
             ],
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/transactions/add'),
+        tooltip: 'Add transaction',
+        child: const Icon(Icons.add),
       ),
       body: Column(
         children: [
@@ -105,35 +108,69 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _FilterChip(
-                    label: 'All',
-                    isSelected: _filterType == null,
-                    onTap: () => setState(() => _filterType = null),
-                  ),
-                  const SizedBox(width: 8),
-                  _FilterChip(
-                    label: 'Income',
-                    isSelected: _filterType == TransactionType.income,
-                    onTap: () => setState(() => _filterType = TransactionType.income),
-                  ),
-                  const SizedBox(width: 8),
-                  _FilterChip(
-                    label: 'Expense',
-                    isSelected: _filterType == TransactionType.expense,
-                    onTap: () => setState(() => _filterType = TransactionType.expense),
-                  ),
-                  const SizedBox(width: 8),
-                  _FilterChip(
-                    label: 'Transfer',
-                    isSelected: _filterType == TransactionType.transfer,
-                    onTap: () => setState(() => _filterType = TransactionType.transfer),
-                  ),
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Left: descriptive title reflecting the current filter
+                Builder(builder: (context) {
+                  final title = _filterType == null
+                      ? 'All transactions'
+                      : (_filterType == TransactionType.income
+                          ? 'Income transactions'
+                          : (_filterType == TransactionType.expense ? 'Expense transactions' : 'Transfer transactions'));
+                  return Text(title, style: Theme.of(context).textTheme.bodyMedium);
+                }),
+
+                // Right: compact selector to change the filter
+                Builder(builder: (context) {
+                  final filterLabel = _filterType == null
+                      ? 'All'
+                      : (_filterType == TransactionType.income
+                          ? 'Income'
+                          : (_filterType == TransactionType.expense ? 'Expense' : 'Transfer'));
+
+                  return PopupMenuButton<String>(
+                    tooltip: 'Filter transactions',
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Theme.of(context).dividerColor),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(filterLabel),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                    onSelected: (v) => setState(() {
+                      switch (v) {
+                        case 'all':
+                          _filterType = null;
+                          break;
+                        case 'income':
+                          _filterType = TransactionType.income;
+                          break;
+                        case 'expense':
+                          _filterType = TransactionType.expense;
+                          break;
+                        case 'transfer':
+                          _filterType = TransactionType.transfer;
+                          break;
+                      }
+                    }),
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(value: 'all', child: Text('All')),
+                      const PopupMenuItem(value: 'income', child: Text('Income')),
+                      const PopupMenuItem(value: 'expense', child: Text('Expense')),
+                      const PopupMenuItem(value: 'transfer', child: Text('Transfer')),
+                    ],
+                  );
+                }),
+              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -146,7 +183,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                         Icon(
                           Icons.receipt_long_outlined,
                           size: 64,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                          color: Theme.of(context).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
                         ),
                         const SizedBox(height: 16),
                         const Text('No transactions yet'),
@@ -168,7 +205,7 @@ class _TransactionsListScreenState extends ConsumerState<TransactionsListScreen>
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: _getTransactionColor(transaction.type).withOpacity(0.1),
+                            backgroundColor: _getTransactionColor(transaction.type).withAlpha((0.1 * 255).round()),
                             child: Icon(
                               _getTransactionIcon(transaction.type),
                               color: _getTransactionColor(transaction.type),
@@ -235,7 +272,7 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color.withOpacity(0.1),
+      color: color.withAlpha((0.1 * 255).round()),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -265,47 +302,6 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FilterChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
-          border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).dividerColor,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected
-                ? Theme.of(context).colorScheme.onPrimary
-                : Theme.of(context).colorScheme.onSurface,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
         ),
       ),
     );

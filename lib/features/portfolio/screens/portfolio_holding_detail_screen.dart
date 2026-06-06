@@ -56,8 +56,8 @@ class HoldingDetailScreen extends ConsumerWidget {
           PopupMenuButton<String>(
             tooltip: 'More',
             onSelected: (value) async {
-              if (value == 'share') {
-                final txt = '${sh.companyName} (${sh.symbol}) - Current Rs ${latestPrice.toStringAsFixed(2)}';
+              if (value == 'copy data') {
+                final txt = '${sh.companyName} (${sh.symbol}) - ${sh.quantity} @ Rs ${sh.averagePrice.toStringAsFixed(2)}, current price Rs ${latestPrice.toStringAsFixed(2)}, Total P/L ${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(2)}%';
                 await Clipboard.setData(ClipboardData(text: txt));
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share text copied to clipboard')));
               } else if (value == 'edit') {
@@ -120,6 +120,7 @@ class HoldingDetailScreen extends ConsumerWidget {
                     }
                   }
 
+
                   // Desired cash effect when deleting the holding should be as if the remaining shares
                   // were sold at the current/latest price.
                   final double desiredCashEffect = sh.quantity * latestPrice;
@@ -142,7 +143,7 @@ class HoldingDetailScreen extends ConsumerWidget {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'share', child: Text('Share')),
+              const PopupMenuItem(value: 'copy data', child: Text('copy data')),
               const PopupMenuItem(value: 'edit', child: Text('Edit')),
               const PopupMenuItem(value: 'buy', child: Text('Buy share')),
               const PopupMenuItem(value: 'sell', child: Text('Sell share')),

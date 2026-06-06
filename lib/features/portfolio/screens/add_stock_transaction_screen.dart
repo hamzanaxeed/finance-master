@@ -116,16 +116,17 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
             ),
             const SizedBox(height: 24),
             TextFormField(
+              controller: _companyNameController,
+              decoration: const InputDecoration(labelText: 'Company name (optional)', border: OutlineInputBorder()),
+            ),
+
+            const SizedBox(height: 16),
+            // Optional company name for the symbol (will be saved to holding meta)
+            TextFormField(
               controller: _symbolController,
               decoration: const InputDecoration(labelText: 'Symbol', border: OutlineInputBorder()),
               textCapitalization: TextCapitalization.characters,
               validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-            ),
-            const SizedBox(height: 16),
-            // Optional company name for the symbol (will be saved to holding meta)
-            TextFormField(
-              controller: _companyNameController,
-              decoration: const InputDecoration(labelText: 'Company name (optional)', border: OutlineInputBorder()),
             ),
             const SizedBox(height: 16),
             TextFormField(
