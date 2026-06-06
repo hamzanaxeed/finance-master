@@ -35,54 +35,6 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
     return list;
   }
 
-  Future<void> _showExportDialog(String title, String content) async {
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: SizedBox(width: double.maxFinite, child: SingleChildScrollView(child: SelectableText(content))),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
-          TextButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: content));
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied to clipboard')));
-            },
-            child: const Text('Copy'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _importDialog(bool json) async {
-    final ctrl = TextEditingController();
-    final ok = await showDialog<bool?>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Import ${json ? 'JSON' : 'CSV'}'),
-        content: SizedBox(width: double.maxFinite, child: TextField(controller: ctrl, maxLines: 12, decoration: const InputDecoration(hintText: 'Paste content here'))),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Import')),
-        ],
-      ),
-    );
-    if (ok == true && ctrl.text.trim().isNotEmpty) {
-      try {
-        if (json) {
-          await ref.read(passwordsProvider.notifier).importJson(ctrl.text.trim());
-        } else {
-          await ref.read(passwordsProvider.notifier).importCsv(ctrl.text.trim());
-        }
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Imported successfully')));
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Import failed: $e')));
-      }
-    }
-  }
-
   void _showDetailsSheet(PasswordEntry e) {
     bool obscure = true;
     showModalBottomSheet<void>(
@@ -108,44 +60,58 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
               const SizedBox(height: 8),
               Row(children: [Text('Password:', style: Theme.of(context).textTheme.bodyLarge), const SizedBox(width: 8), Expanded(child: Text(obscure ? '••••••••' : e.password, style: const TextStyle(fontWeight: FontWeight.bold)))]),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.start,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FilledButton.icon(
-                    onPressed: () {
-                      setState(() => obscure = !obscure);
-                    },
-                    icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
-                    label: Text(obscure ? 'Reveal' : 'Hide'),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        FilledButton.icon(
+                          onPressed: () {
+                            setState(() => obscure = !obscure);
+                          },
+                          icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
+                          label: Text(obscure ? 'Reveal' : 'Hide'),
+                        ),
+                        FilledButton.icon(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: e.password));
+                            Navigator.pop(ctx);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password copied')));
+                          },
+                          icon: const Icon(Icons.copy),
+                          label: const Text('Copy'),
+                        ),
+                        FilledButton.icon(
+                          onPressed: () async {
+                            await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPasswordScreen(entry: e)));
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Edit'),
+                        ),
+                      ],
+                    ),
                   ),
-                  FilledButton.icon(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: e.password));
-                      Navigator.pop(ctx);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password copied')));
-                    },
-                    icon: const Icon(Icons.copy),
-                    label: const Text('Copy'),
-                  ),
-                  FilledButton.icon(
-                    onPressed: () async {
-                      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPasswordScreen(entry: e)));
-                    },
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Edit'),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final confirmed = await showDialog<bool?>(context: context, builder: (dctx) => AlertDialog(title: const Text('Delete'), content: const Text('Delete this entry?'), actions: [TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Delete'))]));
-                      if (confirmed == true) {
-                        await ref.read(passwordsProvider.notifier).delete(e.id);
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Entry deleted')));
-                      }
-                    },
-                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextButton(
+                      onPressed: () async {
+                        final confirmed = await showDialog<bool?>(context: context, builder: (dctx) => AlertDialog(title: const Text('Delete'), content: const Text('Delete this entry?'), actions: [TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Delete'))]));
+                        if (confirmed == true) {
+                          await ref.read(passwordsProvider.notifier).delete(e.id);
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Entry deleted')));
+                        }
+                      },
+                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                    ),
                   ),
                 ],
               ),
@@ -171,53 +137,9 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Passwords'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (v) async {
-              switch (v) {
-                case 'export_json':
-                  final s = await ref.read(passwordsProvider.notifier).exportJson();
-                  await _showExportDialog('Export JSON', s);
-                  break;
-                case 'export_csv':
-                  final s = await ref.read(passwordsProvider.notifier).exportCsv();
-                  await _showExportDialog('Export CSV', s);
-                  break;
-                case 'import_json':
-                  await _importDialog(true);
-                  break;
-                case 'import_csv':
-                  await _importDialog(false);
-                  break;
-                case 'sort':
-                  setState(() => _sortAz = !_sortAz);
-                  break;
-                case 'filter_note':
-                  setState(() => _showOnlyWithNote = !_showOnlyWithNote);
-                  break;
-              }
-            },
-            itemBuilder: (ctx) => [
-              const PopupMenuItem(value: 'export_json', child: Text('Export JSON')),
-              const PopupMenuItem(value: 'export_csv', child: Text('Export CSV')),
-              const PopupMenuItem(value: 'import_json', child: Text('Import JSON')),
-              const PopupMenuItem(value: 'import_csv', child: Text('Import CSV')),
-              PopupMenuItem(value: 'sort', child: Text(_sortAz ? 'Sort Z-A' : 'Sort A-Z')),
-              PopupMenuItem(value: 'filter_note', child: Text(_showOnlyWithNote ? 'Show all' : 'Show only with notes')),
-            ],
-          ),
-        ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _searchCtrl,
-              decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search app, username, email, note', border: OutlineInputBorder()),
-              onChanged: (v) => setState(() => _query = v),
-            ),
-          ),
           Expanded(
             child: filtered.isEmpty
                 ? Center(child: Text('No passwords', style: Theme.of(context).textTheme.titleMedium))
@@ -231,7 +153,6 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
                         child: ListTile(
                           title: Text(e.appName),
                           subtitle: Text(e.email.isNotEmpty ? e.email : e.username),
-                          trailing: IconButton(icon: const Icon(Icons.more_vert), onPressed: () => _showDetailsSheet(e)),
                           onTap: () => _showDetailsSheet(e),
                         ),
                       );
