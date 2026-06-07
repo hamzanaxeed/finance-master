@@ -26,7 +26,7 @@ class StockHoldingCard extends ConsumerWidget {
                 children: [
                   Text(symbol, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 4),
-                  Text('Qty: $quantity • Avg: ${averageBuyPrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
+                  Text('Qty: $quantity • Avg: ${averageBuyPrice.toStringAsFixed(1)}', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -41,11 +41,11 @@ class StockHoldingCard extends ConsumerWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${current.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleMedium),
+                    Text('${current.toStringAsFixed(1)}', style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 4),
-                    Text('${currentValue.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
+                    Text('${currentValue.toStringAsFixed(1)}', style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 4),
-                    Text('${pnl >= 0 ? '+' : '-'}${pnl.abs().toStringAsFixed(2)} (${pnlPct.toStringAsFixed(2)}%)', style: TextStyle(color: pnl >= 0 ? Colors.green : Colors.red)),
+                    Text('${pnl >= 0 ? '+' : '-'}${pnl.abs().toStringAsFixed(1)} (${pnlPct.toStringAsFixed(1)}%)', style: TextStyle(color: pnl >= 0 ? Colors.green : Colors.red)),
                   ],
                 );
               },
@@ -65,4 +65,3 @@ class StockHoldingCard extends ConsumerWidget {
     );
   }
 }
-

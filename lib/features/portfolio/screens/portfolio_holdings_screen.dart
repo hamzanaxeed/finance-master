@@ -11,7 +11,7 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final holdings = ref.watch(holdingsProvider);
-    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 1);
     // height of the footer spacer so the FAB doesn't cover the last item
     final footerHeight = AppSpacing.footerHeight(context);
 
@@ -60,7 +60,7 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
                                     children: [
                                       Text(currencyFormat.format(currentValue), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                       Text(
-                                        '${isPositive ? '+' : ''}${pnlPct.toStringAsFixed(2)}%',
+                                        '${isPositive ? '+' : ''}${pnlPct.toStringAsFixed(1)}%',
                                         style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -74,7 +74,7 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
                                     children: [
                                       Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                       Text(
-                                        '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                        '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(1)}%',
                                         style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -87,7 +87,7 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
                                     children: [
                                       Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                       Text(
-                                        '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                        '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(1)}%',
                                         style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
                                       ),
                                     ],

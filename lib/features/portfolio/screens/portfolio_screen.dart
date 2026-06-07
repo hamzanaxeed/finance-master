@@ -20,7 +20,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   @override
   Widget build(BuildContext context) {
     final holdings = ref.watch(holdingsProvider);
-    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
+    // show amounts with 1 decimal digit for display
+    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 1);
 
     // Cash currently available in portfolio
     final cashAvailable = ref.watch(portfolioCashProvider);
@@ -92,10 +93,42 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(2)}%)',
+                            '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(1)}%)',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Show holdings P/L inside main card
+                    Row(
+                      children: [
+                        Icon(holdingsProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: Colors.white, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Holdings P/L: ${holdingsProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(holdingsProfitLoss)} (${holdingsProfitLoss >= 0 ? '+' : ''}${holdingsProfitLossPercent.toStringAsFixed(1)}%)',
+                            style: TextStyle(color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    // Show total invested inside main card
+                    Row(
+                      children: [
+                        const Icon(Icons.account_balance_wallet_outlined, color: Colors.white70, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Total Invested: ${currencyFormat.format(invested)}',
+                            style: const TextStyle(color: Colors.white70),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -105,8 +138,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
                   children: [
                     Expanded(
@@ -118,7 +151,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                         iconColor: Colors.blue,
                       ),
                     ),
-                    const SizedBox(width: 9),
+                    const SizedBox(width: 2),
                     Expanded(
                       child: _summaryCard(
                         context,
@@ -145,65 +178,6 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             SliverToBoxAdapter(
               child: const SizedBox(height: 16),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(holdingsProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red, size: 18),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Holdings P/L: ${holdingsProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(holdingsProfitLoss)} (${holdingsProfitLossPercent.toStringAsFixed(2)}%)',
-                          style: TextStyle(color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Show total invested (sum of transfers into portfolio)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.account_balance_wallet_outlined, size: 18),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              
-                              child: Text(
-                                'Total Invested: ${currencyFormat.format(invested)}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(child: const SizedBox(height: 16)),
             // Holdings list
             holdings.isEmpty
                 ? SliverFillRemaining(hasScrollBody: false, child: const Center(child: Text('No holdings')))
@@ -224,16 +198,17 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
-                                    Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    // show current price per share (not total current value)
+                                    Text(currencyFormat.format(holding.currentPrice), style: const TextStyle(fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
+                                    Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(1)}', style: Theme.of(context).textTheme.bodySmall),
                                     Text(
-                                      '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                      '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(1)}%',
                                       style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
 
