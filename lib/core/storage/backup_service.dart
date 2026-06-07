@@ -31,7 +31,7 @@ class BackupService {
     'password_entries',
   ];
 
-
+  
   // Certain prefs are stored as non-string types; handle them explicitly
   static bool _isBoolKey(String k) => k == 'biometric_enabled';
   static bool _isDoubleKey(String k) => k == 'portfolio_cash_balance';

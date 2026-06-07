@@ -47,6 +47,9 @@ class AccountNotifier extends StateNotifier<List<Account>> {
     }
   }
 
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _loadAccounts();
+
   // Persistence
   static const String _prefsKey = 'accounts';
 
@@ -66,9 +69,6 @@ class AccountNotifier extends StateNotifier<List<Account>> {
       // ignore and keep empty state
     }
   }
-
-  // Public reload helper used after importing backups
-  Future<void> reload() async => _loadAccounts();
 }
 
 final accountProvider =

@@ -29,6 +29,10 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     try {
       await ref.read(biometricProvider.notifier).ensureInitialized();
     } catch (_) {}
+    // ensure dark mode preference is loaded before first build to avoid theme reset
+    try {
+      await ref.read(darkModeProvider.notifier).ensureInitialized();
+    } catch (_) {}
     final enabled = ref.read(biometricProvider);
     if (!enabled) {
       setState(() {
@@ -61,12 +65,17 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     super.didChangeAppLifecycleState(state);
     // Lock the app when backgrounded and require biometric on resume
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
-      // Mark locked; will re-authenticate on resume if biometrics enabled
-      setState(() {
-        _authed = false;
-      });
-      // also update global session state to indicate locked
-      ref.read(sessionUnlockedProvider.notifier).state = false;
+      // Only lock the app when biometrics are enabled. If the user has not
+      // enabled biometrics we should not force a lock on background/foreground.
+      final enabled = ref.read(biometricProvider);
+      if (enabled) {
+        // Mark locked; will re-authenticate on resume
+        setState(() {
+          _authed = false;
+        });
+        // also update global session state to indicate locked
+        ref.read(sessionUnlockedProvider.notifier).state = false;
+      }
     } else if (state == AppLifecycleState.resumed) {
       // On resume, if biometrics enabled, try to authenticate immediately
       Future.microtask(() async {
