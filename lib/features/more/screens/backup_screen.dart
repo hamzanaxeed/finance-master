@@ -52,7 +52,6 @@ class BackupScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text('Export a secure, encrypted backup of app data. Keep the Pass Key safe.'),
-
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 icon: const Icon(Icons.copy_all),

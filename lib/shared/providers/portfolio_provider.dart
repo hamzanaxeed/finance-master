@@ -6,6 +6,7 @@ import '../models/transaction.dart';
 import 'account_provider.dart';
 import 'transaction_provider.dart';
 
+
 // ---------------- Portfolio cash and transfers (moved up) ----------------
 // Internal provider token for notifier access
 final _portfolioCashProvider = StateNotifierProvider<PortfolioCashNotifier, double>((ref) {
@@ -320,7 +321,7 @@ final holdingsProvider = Provider<List<StockHolding>>((ref) {
   final transactions = ref.watch(stockTransactionProvider);
   final priceHistoryMap = ref.watch(priceHistoryProvider);
   final holdingMeta = ref.watch(holdingMetaProvider);
-  final Map<String, _HoldingData> holdings = {};
+  final Map<String, _HoldingData> holdings = <String, _HoldingData>{};
 
   for (final txn in transactions) {
     if (!holdings.containsKey(txn.symbol)) {
@@ -367,25 +368,21 @@ final holdingsProvider = Provider<List<StockHolding>>((ref) {
             // currentValue uses currentPrice (market price), initialized from last buy price
             currentValue: h.quantity * (h.lastPrice > 0 ? h.lastPrice : h.averagePrice),
           ))
-      .toList();
+      .toList(growable: false);
 });
 
-class _HoldingData {
-  final String symbol;
-  final String companyName;
-  double quantity = 0;
-  double totalInvestment = 0;
-  double lastPrice = 0; // market price independent of cost basis
+// New: sum of holdings cost basis (sum of totalInvestment across holdings)
+final portfolioHoldingsInvestmentProvider = Provider<double>((ref) {
+  final holdings = ref.watch(holdingsProvider);
+  return holdings.fold<double>(0.0, (sum, h) => sum + (h.totalInvestment));
+});
 
-  _HoldingData({
-    required this.symbol,
-    required this.companyName,
-  });
-
-  double get averagePrice =>
-      quantity > 0 ? totalInvestment / quantity : 0;
-}
-
+// New: profit/loss for holdings = current market value - cost basis
+final portfolioHoldingsProfitLossProvider = Provider<double>((ref) {
+  final currentValue = ref.watch(portfolioHoldingsValueProvider);
+  final invested = ref.watch(portfolioHoldingsInvestmentProvider);
+  return currentValue - invested;
+});
 
 // Transfers between accounts and portfolio are recorded here
 class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
@@ -522,3 +519,19 @@ final portfolioTotalValueProvider = Provider<double>((ref) {
   final holdings = ref.watch(portfolioHoldingsValueProvider);
   return cash + holdings;
 });
+
+class _HoldingData {
+  final String symbol;
+  final String companyName;
+  double quantity = 0;
+  double totalInvestment = 0;
+  double lastPrice = 0; // market price independent of cost basis
+
+  _HoldingData({
+    required this.symbol,
+    required this.companyName,
+  });
+
+  double get averagePrice => quantity > 0 ? totalInvestment / quantity : 0;
+}
+

@@ -9,11 +9,18 @@ import '../../../providers/stock_providers.dart';
 import '../../../repositories/stock_repository.dart';
 import '../../../shared/models/portfolio.dart';
 
-class PortfolioScreen extends ConsumerWidget {
+class PortfolioScreen extends ConsumerStatefulWidget {
   const PortfolioScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PortfolioScreen> createState() => _PortfolioScreenState();
+}
+
+class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
+  bool _isRefreshing = false;
+
+  @override
+  Widget build(BuildContext context) {
     final holdings = ref.watch(holdingsProvider);
     final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
 
@@ -26,10 +33,13 @@ class PortfolioScreen extends ConsumerWidget {
 
     // nl = net external transfers into portfolio (transfers in - transfers out)
     final invested = ref.watch(portfolioTotalInvestedProvider);
-
-    // Profit/Loss calculated against invested (net transfers)
+    // Current holdings cost basis (sum of avg * qty)
+    final holdingsInvestment = ref.watch(portfolioHoldingsInvestmentProvider);
+    final holdingsProfitLoss = ref.watch(portfolioHoldingsProfitLossProvider);
+    final holdingsProfitLossPercent = holdingsInvestment > 0 ? (holdingsProfitLoss / holdingsInvestment) * 100 : 0.0;
+    // Total portfolio profit/loss relative to total invested (transfers)
     final totalProfitLoss = totalValue - invested;
-    final profitLossPercent = invested > 0 ? (totalProfitLoss / invested) * 100 : 0;
+    final profitLossPercent = invested > 0 ? (totalProfitLoss / invested) * 100 : 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -91,7 +101,7 @@ class PortfolioScreen extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 1),
             child: Row(
               children: [
                 Expanded(
@@ -103,17 +113,17 @@ class PortfolioScreen extends ConsumerWidget {
                     iconColor: Colors.blue,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 9),
                 Expanded(
                   child: _summaryCard(
                     context,
-                    title: 'Invested',
-                    value: currencyFormat.format(invested),
+                    title: 'Current cost',
+                    value: currencyFormat.format(holdingsInvestment),
                     icon: Icons.trending_up_rounded,
                     iconColor: Colors.green,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 9),
                 Expanded(
                   child: _summaryCard(
                     context,
@@ -127,49 +137,97 @@ class PortfolioScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
+          // Show holdings-specific profit/loss under the summary cards
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(holdingsProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Holdings P/L: ${holdingsProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(holdingsProfitLoss)} (${holdingsProfitLossPercent.toStringAsFixed(2)}%)',
+                            style: TextStyle(color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           Expanded(
             child: holdings.isEmpty
                 ? const Center(child: Text('No holdings'))
-                : ListView.builder(
-                    // add bottom padding so the FAB doesn't cover the last item
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-                    itemCount: holdings.length,
-                    itemBuilder: (context, index) {
-                      final holding = holdings[index];
-                      final isPositive = holding.profitLoss >= 0;
-                      return InkWell(
-                        onTap: () => context.push('/portfolio/holdings/${holding.symbol}'),
-                        child: Card(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                : NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      // Detect upward overscroll at bottom (user swiped up past end)
+                      if (notification is OverscrollNotification) {
+                        final metrics = notification.metrics;
+                        // only trigger when at bottom and user scrolls further up (overscroll > 0)
+                        if (metrics.pixels >= metrics.maxScrollExtent && notification.overscroll > 0 && !_isRefreshing) {
+                          _triggerRefresh();
+                        }
+                      }
+                      return false;
+                    },
+                    child: RefreshIndicator(
+                      // also support the standard swipe-down-to-refresh gesture
+                      onRefresh: () => _refreshAllPrices(context, ref),
+                      child: ListView.builder(
+                        // add bottom padding so the FAB doesn't cover the last item
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                        itemCount: holdings.length,
+                        itemBuilder: (context, index) {
+                          final holding = holdings[index];
+                          final isPositive = holding.profitLoss >= 0;
+                          return InkWell(
+                            onTap: () => context.push('/portfolio/holdings/${holding.symbol}'),
+                            child: Card(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
-                                    Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
-                                    Text(
-                                      '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
-                                      style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
+                                        Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
+                                        Text(
+                                          '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                          style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
           ),
         ],
@@ -536,7 +594,19 @@ class PortfolioScreen extends ConsumerWidget {
       }
     }
   }
+
+  Future<void> _triggerRefresh() async {
+    setState(() => _isRefreshing = true);
+    try {
+      await _refreshAllPrices(context, ref);
+    } finally {
+      // small delay so UI has a moment to reflect the action and avoid rapid repeats
+      await Future.delayed(const Duration(milliseconds: 400));
+      if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
 }
+
 Widget _summaryCard(
     BuildContext context, {
       required String title,
