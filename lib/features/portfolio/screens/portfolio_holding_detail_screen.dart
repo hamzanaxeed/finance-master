@@ -217,7 +217,7 @@ class HoldingDetailScreen extends ConsumerWidget {
             Align(
               alignment: Alignment.centerRight,
               child: OutlinedButton.icon(
-                icon: const Icon(Icons.currency_rupee),
+
                 label: const Text('Update current price'),
                 onPressed: () async {
                   final controller = TextEditingController();
