@@ -67,82 +67,97 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Colors.green, Colors.teal]),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Total Portfolio Value', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 0.9), fontSize: 14)),
-                const SizedBox(height: 8),
-                Text(currencyFormat.format(totalValue), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(totalProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: Colors.white, size: 16),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(2)}%)',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is OverscrollNotification) {
+            final metrics = notification.metrics;
+            if (metrics.pixels >= metrics.maxScrollExtent && notification.overscroll > 0 && !_isRefreshing) {
+              _triggerRefresh();
+            }
+          }
+          return false;
+        },
+        child: RefreshIndicator(
+          onRefresh: () => _refreshAllPrices(context, ref),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: [Colors.green, Colors.teal]),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Total Portfolio Value', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 0.9), fontSize: 14)),
+                      const SizedBox(height: 8),
+                      Text(currencyFormat.format(totalValue), style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(totalProfitLoss >= 0 ? Icons.trending_up : Icons.trending_down, color: Colors.white, size: 16),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${totalProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(totalProfitLoss)} (${totalProfitLoss >= 0 ? '+' : ''}${profitLossPercent.toStringAsFixed(2)}%)',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _summaryCard(
-                    context,
-                    title: 'Cash',
-                    value: currencyFormat.format(cashAvailable),
-                    icon: Icons.account_balance_wallet_rounded,
-                    iconColor: Colors.blue,
+                    ],
                   ),
                 ),
-                const SizedBox(width: 9),
-                Expanded(
-                  child: _summaryCard(
-                    context,
-                    title: 'Current cost',
-                    value: currencyFormat.format(holdingsInvestment),
-                    icon: Icons.trending_up_rounded,
-                    iconColor: Colors.green,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _summaryCard(
+                          context,
+                          title: 'Cash',
+                          value: currencyFormat.format(cashAvailable),
+                          icon: Icons.account_balance_wallet_rounded,
+                          iconColor: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: _summaryCard(
+                          context,
+                          title: 'Current cost',
+                          value: currencyFormat.format(holdingsInvestment),
+                          icon: Icons.trending_up_rounded,
+                          iconColor: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: _summaryCard(
+                          context,
+                          title: 'Holdings',
+                          value: currencyFormat.format(holdingsValue),
+                          icon: Icons.pie_chart_rounded,
+                          iconColor: Colors.orange,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 9),
-                Expanded(
-                  child: _summaryCard(
-                    context,
-                    title: 'Holdings',
-                    value: currencyFormat.format(holdingsValue),
-                    icon: Icons.pie_chart_rounded,
-                    iconColor: Colors.orange,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Show holdings-specific profit/loss under the summary cards
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
+              ),
+              SliverToBoxAdapter(
+                child: const SizedBox(height: 16),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
@@ -164,73 +179,55 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: holdings.isEmpty
-                ? const Center(child: Text('No holdings'))
-                : NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      // Detect upward overscroll at bottom (user swiped up past end)
-                      if (notification is OverscrollNotification) {
-                        final metrics = notification.metrics;
-                        // only trigger when at bottom and user scrolls further up (overscroll > 0)
-                        if (metrics.pixels >= metrics.maxScrollExtent && notification.overscroll > 0 && !_isRefreshing) {
-                          _triggerRefresh();
-                        }
-                      }
-                      return false;
-                    },
-                    child: RefreshIndicator(
-                      // also support the standard swipe-down-to-refresh gesture
-                      onRefresh: () => _refreshAllPrices(context, ref),
-                      child: ListView.builder(
-                        // add bottom padding so the FAB doesn't cover the last item
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-                        itemCount: holdings.length,
-                        itemBuilder: (context, index) {
-                          final holding = holdings[index];
-                          final isPositive = holding.profitLoss >= 0;
-                          return InkWell(
-                            onTap: () => context.push('/portfolio/holdings/${holding.symbol}'),
-                            child: Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
-                                        Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
-                                        Text(
-                                          '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
-                                          style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+              ),
+              SliverToBoxAdapter(child: const SizedBox(height: 16)),
+              // Holdings list
+              holdings.isEmpty
+                  ? SliverFillRemaining(hasScrollBody: false, child: const Center(child: Text('No holdings')))
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final holding = holdings[index];
+                        final isPositive = holding.profitLoss >= 0;
+                        return InkWell(
+                          onTap: () => context.push('/portfolio/holdings/${holding.symbol}'),
+                          child: Card(
+                            margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(holding.symbol, style: Theme.of(context).textTheme.titleMedium),
+                                      Text(currencyFormat.format(holding.currentValue), style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('${holding.quantity} shares @ Rs ${holding.averagePrice.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
+                                      Text(
+                                        '${isPositive ? '+' : ''}${holding.profitLossPercent.toStringAsFixed(2)}%',
+                                        style: TextStyle(color: isPositive ? Colors.green : Colors.red, fontSize: 12, fontWeight: FontWeight.bold),
+                                      ),
+
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      }, childCount: holdings.length),
                     ),
-                  ),
+              // bottom padding to account for FAB
+              SliverToBoxAdapter(child: SizedBox(height: 96)),
+            ],
           ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/portfolio/add-transaction'),
@@ -588,7 +585,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             ref.read(priceHistoryProvider.notifier).addPricePoint(sym, PricePoint(time: quote.fetchedAt, price: quote.price));
           } catch (_) {}
         }
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Updated valid symbols; invalid: ${e.invalidSymbols.join(",")}')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid symbols; invalid: ${e.invalidSymbols.join(",")}')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to refresh prices: $e')));
       }
@@ -635,6 +632,8 @@ Widget _summaryCard(
       ],
     ),
     child: Column(
+      // prevent the Column from expanding beyond the card's space
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -651,7 +650,7 @@ Widget _summaryCard(
           ),
         ),
 
-        const Spacer(),
+        const SizedBox(height: 8),
 
         Text(
           title,
@@ -667,15 +666,17 @@ Widget _summaryCard(
 
         const SizedBox(height: 4),
 
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            value,
-            maxLines: 1,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),

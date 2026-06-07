@@ -19,6 +19,7 @@ class StockRepository {
     try {
       final raw = await StorageUtils.safeLoadPrefsString(_cacheKey);
       if (raw == null) return;
+      debugPrint('StockRepository: loading cache from prefs ($_cacheKey)');
       final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
       decoded.forEach((k, v) {
         try {
@@ -26,6 +27,7 @@ class StockRepository {
           _cache[k] = sq;
         } catch (_) {}
       });
+      debugPrint('StockRepository: loaded ${_cache.length} cached quotes');
     } catch (e) {
       debugPrint('StockRepository._loadCache failed: $e');
     }
@@ -35,6 +37,7 @@ class StockRepository {
     try {
       final map = _cache.map((k, v) => MapEntry(k, v.toJson()));
       await StorageUtils.safeSavePrefsString(_cacheKey, jsonEncode(map));
+      debugPrint('StockRepository: saved ${_cache.length} quotes to cache');
     } catch (e) {
       debugPrint('StockRepository._saveCache failed: $e');
     }
@@ -46,16 +49,26 @@ class StockRepository {
     final cached = _cache[s];
     final now = DateTime.now();
     if (cached != null && now.difference(cached.fetchedAt) <= maxAge) {
+      debugPrint('StockRepository.getQuote: cache hit for $s (age ${now.difference(cached.fetchedAt).inSeconds}s)');
       return cached;
     }
+    if (cached != null) debugPrint('StockRepository.getQuote: cached but stale for $s (age ${now.difference(cached.fetchedAt).inSeconds}s)');
+    debugPrint('StockRepository.getQuote: fetching $s from PSX');
     try {
+      final sw = Stopwatch()..start();
       final fetched = await _service.fetchLatestPrice(s);
+      sw.stop();
+      debugPrint('StockRepository.getQuote: fetched $s price=${fetched.price} in ${sw.elapsedMilliseconds}ms');
       _cache[s] = fetched;
       // fire-and-forget cache save
       _saveCache();
       return fetched;
     } catch (e) {
-      if (cached != null) return cached; // fallback
+      debugPrint('StockRepository.getQuote: fetch failed for $s: $e');
+      if (cached != null) {
+        debugPrint('StockRepository.getQuote: returning stale cached quote for $s');
+        return cached; // fallback
+      }
       rethrow;
     }
   }
@@ -69,14 +82,16 @@ class StockRepository {
       try {
         final q = await getQuote(s);
         results[s] = q;
+        debugPrint('StockRepository.fetchSymbols: success $s -> ${q.price}');
       } catch (e) {
-        debugPrint('fetchSymbols failed for $s: $e');
+        debugPrint('StockRepository.fetchSymbols: failed for $s: $e');
         if (e is InvalidSymbolException) {
           invalids.add(s);
         }
       }
     });
     await Future.wait(futures);
+    debugPrint('StockRepository.fetchSymbols: completed ${results.length} successes, ${invalids.length} invalids');
     if (invalids.isNotEmpty) {
       throw InvalidSymbolsException(invalidSymbols: invalids, results: results);
     }
@@ -88,6 +103,7 @@ class StockRepository {
 
   void dispose() {
     try {
+      debugPrint('StockRepository.dispose: disposing service');
       _service.dispose();
     } catch (_) {}
   }
