@@ -6,6 +6,67 @@ import '../models/transaction.dart';
 import 'account_provider.dart';
 import 'transaction_provider.dart';
 
+// ---------------- Portfolio cash and transfers (moved up) ----------------
+// Internal provider token for notifier access
+final _portfolioCashProvider = StateNotifierProvider<PortfolioCashNotifier, double>((ref) {
+  return PortfolioCashNotifier();
+});
+
+// Public alias
+final portfolioCashProvider = Provider<double>((ref) => ref.watch(_portfolioCashProvider));
+
+class PortfolioCashNotifier extends StateNotifier<double> {
+  PortfolioCashNotifier() : super(0) {
+    _load();
+  }
+
+  static const String _key = 'portfolio_cash_balance';
+
+  void deposit(double amount) {
+    state = state + amount;
+    _save();
+  }
+
+  void withdraw(double amount) {
+    state = state - amount;
+    if (state < 0) state = 0; // safety
+    _save();
+  }
+
+  Future<void> _save() async {
+    await StorageUtils.safeSavePrefsDouble(_key, state);
+  }
+
+  Future<void> _load() async {
+    final v = await StorageUtils.safeLoadPrefsDouble(_key);
+    if (v != null) state = v;
+  }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _load();
+}
+
+// Helper provider: allow mutating portfolio cash without creating a PortfolioTransfer record.
+// This is intentionally lightweight to support 'manage cash' UI that directly adjusts portfolio cash.
+final portfolioCashActionsProvider = Provider<_PortfolioCashActions>((ref) {
+  return _PortfolioCashActions(ref);
+});
+
+class _PortfolioCashActions {
+  final Ref ref;
+  _PortfolioCashActions(this.ref);
+
+  void deposit(double amount) {
+    ref.read(_portfolioCashProvider.notifier).deposit(amount);
+  }
+
+  void withdraw(double amount) {
+    ref.read(_portfolioCashProvider.notifier).withdraw(amount);
+  }
+}
+
+// ---------------- end moved section ----------------
+
 class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
   final Ref ref;
 
@@ -42,6 +103,12 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
     _saveStockTransactions();
   }
 
+  /// Delete all transactions for a given symbol (used when deleting a holding)
+  void deleteTransactionsForSymbol(String symbol) {
+    state = state.where((txn) => txn.symbol != symbol).toList();
+    _saveStockTransactions();
+  }
+
   // Persistence
   static const String _stockKey = 'stock_transactions';
 
@@ -61,13 +128,106 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
     } catch (_) {}
   }
 
-  /// Delete all transactions for a given symbol (used when deleting a holding)
-  void deleteTransactionsForSymbol(String symbol) {
-    state = state.where((txn) => txn.symbol != symbol).toList();
-    _saveStockTransactions();
-  }
+  // Public reload used after importing backups
+  Future<void> reload() async => _loadStockTransactions();
 }
 
+// Price history notifier - stores list of PricePoint per symbol and persists
+class PriceHistoryNotifier extends StateNotifier<Map<String, List<PricePoint>>> {
+  PriceHistoryNotifier() : super({}) {
+    _load();
+  }
+
+  static const String _key = 'price_history';
+
+  void addPricePoint(String symbol, PricePoint p) {
+    final newState = Map<String, List<PricePoint>>.from(state);
+    final list = List<PricePoint>.from(newState[symbol] ?? []);
+    list.add(p);
+    newState[symbol] = list;
+    state = newState;
+    _save();
+  }
+
+  void setHistory(String symbol, List<PricePoint> list) {
+    final newState = Map<String, List<PricePoint>>.from(state);
+    newState[symbol] = list;
+    state = newState;
+    _save();
+  }
+
+  List<PricePoint> getHistory(String symbol) => state[symbol] ?? [];
+
+  Future<void> _save() async {
+    final map = state.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()));
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(map));
+  }
+
+  Future<void> _load() async {
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
+    if (raw == null) return;
+    try {
+      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
+      final result = <String, List<PricePoint>>{};
+      decoded.forEach((k, v) {
+        final List<dynamic> arr = v as List<dynamic>;
+        result[k] = arr.map((e) => PricePoint.fromJson(e as Map<String, dynamic>)).toList();
+      });
+      state = result;
+    } catch (_) {}
+  }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _load();
+}
+
+final priceHistoryProvider = StateNotifierProvider<PriceHistoryNotifier, Map<String, List<PricePoint>>>((ref) {
+  return PriceHistoryNotifier();
+});
+
+// Latest price for a given symbol (null if none)
+final latestPriceProvider = Provider.family<double?, String>((ref, symbol) {
+  final map = ref.watch(priceHistoryProvider);
+  final list = map[symbol];
+  if (list == null || list.isEmpty) return null;
+  return list.last.price;
+});
+
+// Holding meta like editable company name
+class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
+  HoldingMetaNotifier() : super({}) {
+    _load();
+  }
+
+  static const String _key = 'holding_meta';
+
+  void updateCompanyName(String symbol, String name) {
+    final newState = Map<String, String>.from(state);
+    newState[symbol] = name;
+    state = newState;
+    _save();
+  }
+
+  Future<void> _save() async {
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(state));
+  }
+
+  Future<void> _load() async {
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
+    if (raw == null) return;
+    try {
+      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
+      state = decoded.map((k, v) => MapEntry(k, v as String));
+    } catch (_) {}
+  }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _load();
+}
+
+final holdingMetaProvider = StateNotifierProvider<HoldingMetaNotifier, Map<String, String>>((ref) {
+  return HoldingMetaNotifier();
+});
 
 class DividendNotifier extends StateNotifier<List<Dividend>> {
   DividendNotifier() : super([]) {
@@ -100,6 +260,9 @@ class DividendNotifier extends StateNotifier<List<Dividend>> {
       state = decoded.map((e) => Dividend.fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {}
   }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _loadDividends();
 }
 
 class CorporateActionNotifier extends StateNotifier<List<CorporateAction>> {
@@ -133,6 +296,9 @@ class CorporateActionNotifier extends StateNotifier<List<CorporateAction>> {
       state = decoded.map((e) => CorporateAction.fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {}
   }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _loadActions();
 }
 
 final stockTransactionProvider = StateNotifierProvider<StockTransactionNotifier, List<StockTransaction>>((ref) {
@@ -220,134 +386,6 @@ class _HoldingData {
       quantity > 0 ? totalInvestment / quantity : 0;
 }
 
-// Price history notifier - stores list of PricePoint per symbol and persists
-class PriceHistoryNotifier extends StateNotifier<Map<String, List<PricePoint>>> {
-  PriceHistoryNotifier() : super({}) {
-    _load();
-  }
-
-  static const String _key = 'price_history';
-
-  void addPricePoint(String symbol, PricePoint p) {
-    final newState = Map<String, List<PricePoint>>.from(state);
-    final list = List<PricePoint>.from(newState[symbol] ?? []);
-    list.add(p);
-    newState[symbol] = list;
-    state = newState;
-    _save();
-  }
-
-  void setHistory(String symbol, List<PricePoint> list) {
-    final newState = Map<String, List<PricePoint>>.from(state);
-    newState[symbol] = list;
-    state = newState;
-    _save();
-  }
-
-  List<PricePoint> getHistory(String symbol) => state[symbol] ?? [];
-
-  Future<void> _save() async {
-    final map = state.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()));
-    await StorageUtils.safeSavePrefsString(_key, jsonEncode(map));
-  }
-
-  Future<void> _load() async {
-    final raw = await StorageUtils.safeLoadPrefsString(_key);
-    if (raw == null) return;
-    try {
-      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final result = <String, List<PricePoint>>{};
-      decoded.forEach((k, v) {
-        final List<dynamic> arr = v as List<dynamic>;
-        result[k] = arr.map((e) => PricePoint.fromJson(e as Map<String, dynamic>)).toList();
-      });
-      state = result;
-    } catch (_) {}
-  }
-}
-
-final priceHistoryProvider = StateNotifierProvider<PriceHistoryNotifier, Map<String, List<PricePoint>>>((ref) {
-  return PriceHistoryNotifier();
-});
-
-// Latest price for a given symbol (null if none)
-final latestPriceProvider = Provider.family<double?, String>((ref, symbol) {
-  final map = ref.watch(priceHistoryProvider);
-  final list = map[symbol];
-  if (list == null || list.isEmpty) return null;
-  return list.last.price;
-});
-
-// Holding meta like editable company name
-class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
-  HoldingMetaNotifier() : super({}) {
-    _load();
-  }
-
-  static const String _key = 'holding_meta';
-
-  void updateCompanyName(String symbol, String name) {
-    final newState = Map<String, String>.from(state);
-    newState[symbol] = name;
-    state = newState;
-    _save();
-  }
-
-  Future<void> _save() async {
-    await StorageUtils.safeSavePrefsString(_key, jsonEncode(state));
-  }
-
-  Future<void> _load() async {
-    final raw = await StorageUtils.safeLoadPrefsString(_key);
-    if (raw == null) return;
-    try {
-      final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
-      state = decoded.map((k, v) => MapEntry(k, v as String));
-    } catch (_) {}
-  }
-}
-
-final holdingMetaProvider = StateNotifierProvider<HoldingMetaNotifier, Map<String, String>>((ref) {
-  return HoldingMetaNotifier();
-});
-
-// ---------------- Portfolio cash and transfers ----------------
-
-// Internal provider token for notifier access
-final _portfolioCashProvider = StateNotifierProvider<PortfolioCashNotifier, double>((ref) {
-  return PortfolioCashNotifier();
-});
-
-// Public alias
-final portfolioCashProvider = Provider<double>((ref) => ref.watch(_portfolioCashProvider));
-
-class PortfolioCashNotifier extends StateNotifier<double> {
-  PortfolioCashNotifier() : super(0) {
-    _load();
-  }
-
-  static const String _key = 'portfolio_cash_balance';
-
-  void deposit(double amount) {
-    state = state + amount;
-    _save();
-  }
-
-  void withdraw(double amount) {
-    state = state - amount;
-    if (state < 0) state = 0; // safety
-    _save();
-  }
-
-  Future<void> _save() async {
-    await StorageUtils.safeSavePrefsDouble(_key, state);
-  }
-
-  Future<void> _load() async {
-    final v = await StorageUtils.safeLoadPrefsDouble(_key);
-    if (v != null) state = v;
-  }
-}
 
 // Transfers between accounts and portfolio are recorded here
 class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
@@ -415,29 +453,29 @@ class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
       state = decoded.map((e) => PortfolioTransfer.fromJson(e as Map<String, dynamic>)).toList();
     } catch (_) {}
   }
+
+  // Public reload used after importing backups
+  Future<void> reload() async => _load();
 }
 
 final portfolioTransferProvider = StateNotifierProvider<PortfolioTransferNotifier, List<PortfolioTransfer>>((ref) {
   return PortfolioTransferNotifier(ref);
 });
 
-// Helper provider: allow mutating portfolio cash without creating a PortfolioTransfer record.
-// This is intentionally lightweight to support 'manage cash' UI that directly adjusts portfolio cash.
-final portfolioCashActionsProvider = Provider<_PortfolioCashActions>((ref) {
-  return _PortfolioCashActions(ref);
-});
-
-class _PortfolioCashActions {
-  final Ref ref;
-  _PortfolioCashActions(this.ref);
-
-  void deposit(double amount) {
-    ref.read(_portfolioCashProvider.notifier).deposit(amount);
-  }
-
-  void withdraw(double amount) {
-    ref.read(_portfolioCashProvider.notifier).withdraw(amount);
-  }
+// Helper to reload all portfolio-related providers after import. This function is in the same library so it can access private providers.
+Future<void> reloadPortfolioData(WidgetRef ref) async {
+  final futures = <Future<void>>[];
+  futures.add(ref.read(stockTransactionProvider.notifier).reload());
+  futures.add(ref.read(dividendProvider.notifier).reload());
+  futures.add(ref.read(corporateActionProvider.notifier).reload());
+  futures.add(ref.read(priceHistoryProvider.notifier).reload());
+  futures.add(ref.read(holdingMetaProvider.notifier).reload());
+  futures.add(ref.read(portfolioTransferProvider.notifier).reload());
+  // reload portfolio cash (private notifier) via its private provider
+  try {
+    futures.add(ref.read(_portfolioCashProvider.notifier).reload());
+  } catch (_) {}
+  await Future.wait(futures);
 }
 
 // Total invested into portfolio = sum of transfers into portfolio - sum out

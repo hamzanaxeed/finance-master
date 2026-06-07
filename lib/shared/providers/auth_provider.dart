@@ -28,6 +28,9 @@ class BiometricNotifier extends StateNotifier<bool> {
     if (!_initCompleter.isCompleted) _initCompleter.complete();
   }
 
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _load();
+
   final Completer<void> _initCompleter = Completer<void>();
 
   /// Wait until provider has loaded stored preference

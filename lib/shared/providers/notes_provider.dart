@@ -40,6 +40,9 @@ class NotesNotifier extends StateNotifier<List<NoteItem>> {
     } catch (_) {}
   }
 
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _load();
+
   // Export notes as JSON string
   Future<String> exportJson() async {
     final jsonList = state.map((n) => n.toJson()).toList();

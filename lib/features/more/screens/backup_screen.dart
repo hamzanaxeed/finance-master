@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/backup_service.dart';
+import '../../../shared/providers/account_provider.dart';
+import '../../../shared/providers/transaction_provider.dart';
+import '../../../shared/providers/passwords_provider.dart';
+import '../../../shared/providers/notes_provider.dart';
+import '../../../shared/providers/portfolio_provider.dart';
+import '../../../shared/providers/auth_provider.dart';
 
 class BackupScreen extends ConsumerWidget {
   const BackupScreen({super.key});
@@ -105,6 +111,23 @@ class BackupScreen extends ConsumerWidget {
                   );
                   if (confirm != true) return;
                   await BackupService.applyImportedBackup(parsed);
+                  // Reload providers so UI reflects imported data immediately
+                  try {
+                    await Future.wait<void>([
+                      ref.read(accountProvider.notifier).reload(),
+                      ref.read(transactionProvider.notifier).reload(),
+                      ref.read(categoryProvider.notifier).reload(),
+                      ref.read(passwordsProvider.notifier).reload(),
+                      ref.read(notesProvider.notifier).reload(),
+                      ref.read(biometricProvider.notifier).reload(),
+                      reloadPortfolioData(ref),
+                    ]);
+                    // Ensure sessionUnlocked reflects biometric preference
+                    try {
+                      final bioEnabled = ref.read(biometricProvider);
+                      if (!bioEnabled) ref.read(sessionUnlockedProvider.notifier).state = true;
+                    } catch (_) {}
+                  } catch (_) {}
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Import successful')));
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Import failed: $e')));
@@ -166,6 +189,21 @@ class BackupScreen extends ConsumerWidget {
                   );
                   if (confirm != true) return;
                   await BackupService.applyImportedBackup(parsed);
+                  try {
+                    await Future.wait<void>([
+                      ref.read(accountProvider.notifier).reload(),
+                      ref.read(transactionProvider.notifier).reload(),
+                      ref.read(categoryProvider.notifier).reload(),
+                      ref.read(passwordsProvider.notifier).reload(),
+                      ref.read(notesProvider.notifier).reload(),
+                      ref.read(biometricProvider.notifier).reload(),
+                      reloadPortfolioData(ref),
+                    ]);
+                    try {
+                      final bioEnabled = ref.read(biometricProvider);
+                      if (!bioEnabled) ref.read(sessionUnlockedProvider.notifier).state = true;
+                    } catch (_) {}
+                  } catch (_) {}
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Import successful')));
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Import failed: $e')));

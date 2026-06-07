@@ -57,12 +57,14 @@ class MoreScreen extends ConsumerWidget {
                   secondary: const Icon(Icons.fingerprint),
                   value: enabled,
                   onChanged: (val) async {
+                    // Capture messenger synchronously to avoid looking up ancestor after await
+                    final messenger = ScaffoldMessenger.of(context);
                     // perform toggle and show result in a SnackBar
                     final msg = await ref.read(biometricProvider.notifier).toggle();
                     if (msg == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
+                      messenger.showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $msg')));
+                      messenger.showSnackBar(SnackBar(content: Text('Failed: $msg')));
                     }
                   },
                 );
