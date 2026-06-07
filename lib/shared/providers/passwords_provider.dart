@@ -42,6 +42,9 @@ class PasswordsNotifier extends StateNotifier<List<PasswordEntry>> {
     } catch (_) {}
   }
 
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _load();
+
   // Export stored password entries as JSON string (encrypted storage still used for persistence)
   Future<String> exportJson() async {
     final jsonList = state.map((e) => e.toJson()).toList();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/storage/backup_service.dart';
 
@@ -47,17 +48,13 @@ class BackupScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               icon: const Icon(Icons.upload_file),
-              label: const Text('Export Backup (save file)'),
+              label: const Text('Export Backup to Downloads'),
               onPressed: () async {
                 final pass = await _askPassphrase(context, title: 'Enter passphrase to encrypt backup');
                 if (pass == null) return;
                 try {
                   final path = await BackupService.exportEncryptedBackup(pass);
-                  if (path != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Backup saved: $path')));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Export cancelled')));
-                  }
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Backup saved to: $path')));
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export failed: $e')));
                 }
@@ -65,20 +62,21 @@ class BackupScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             ElevatedButton.icon(
-              icon: const Icon(Icons.archive),
-              label: const Text('Export Backup to App Folder'),
+              icon: const Icon(Icons.copy_all),
+              label: const Text('Copy Backup to Clipboard'),
               onPressed: () async {
                 final pass = await _askPassphrase(context, title: 'Enter passphrase to encrypt backup');
                 if (pass == null) return;
                 try {
-                  final path = await BackupService.exportToAppDirectory(pass);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Backup saved: $path')));
+                  final txt = await BackupService.exportEncryptedBackupAsText(pass);
+                  await Clipboard.setData(ClipboardData(text: txt));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup copied to clipboard')));
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export failed: $e')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Copy failed: $e')));
                 }
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             const Text('Import a previously exported backup file (will overwrite local data).'),
             const SizedBox(height: 12),
             ElevatedButton.icon(
@@ -94,6 +92,67 @@ class BackupScreen extends ConsumerWidget {
                   final pass = await _askPassphrase(context, title: 'Enter passphrase to decrypt backup');
                   if (pass == null) return;
                   final parsed = await BackupService.importEncryptedBackupFromPath(picked, pass);
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Confirm Import'),
+                      content: const Text('Importing will overwrite local data. Continue?'),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+                        ElevatedButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Import')),
+                      ],
+                    ),
+                  );
+                  if (confirm != true) return;
+                  await BackupService.applyImportedBackup(parsed);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Import successful')));
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Import failed: $e')));
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.paste),
+              label: const Text('Paste Backup from Clipboard'),
+              onPressed: () async {
+                try {
+                  final clip = await Clipboard.getData('text/plain');
+                  final initial = clip?.text ?? '';
+
+                  // Let user edit/paste the backup text if clipboard was empty
+                  final controller = TextEditingController(text: initial);
+                  final formKey = GlobalKey<FormState>();
+                  final pasted = await showDialog<String?>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Paste backup JSON'),
+                      content: Form(
+                        key: formKey,
+                        child: TextFormField(
+                          controller: controller,
+                          maxLines: 8,
+                          decoration: const InputDecoration(hintText: 'Paste backup JSON here'),
+                          validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        ),
+                      ),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.of(ctx).pop(null), child: const Text('Cancel')),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) Navigator.of(ctx).pop(controller.text.trim());
+                          },
+                          child: const Text('Next'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (pasted == null) return;
+
+                  final pass = await _askPassphrase(context, title: 'Enter passphrase to decrypt pasted backup');
+                  if (pass == null) return;
+
+                  final parsed = await BackupService.importEncryptedBackupFromText(pasted, pass);
                   final confirm = await showDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(

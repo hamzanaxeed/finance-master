@@ -134,4 +134,27 @@ class StorageUtils {
       return null;
     }
   }
+
+  // Remove a prefs key and its backup
+  static Future<bool> safeRemovePrefsKey(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+      await prefs.remove('${key}_bak');
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // Remove a secure storage key and its backup
+  static Future<bool> safeRemoveSecureKey(String key) async {
+    try {
+      await _secure.delete(key: key);
+      await _secure.delete(key: '${key}_bak');
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 }

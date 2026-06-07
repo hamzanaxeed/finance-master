@@ -59,6 +59,9 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
       // ignore and keep empty state
     }
   }
+
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _loadTransactions();
 }
 
 final transactionProvider =
@@ -130,6 +133,9 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
       state = CategoryState.fromJson(decoded);
     } catch (_) {}
   }
+
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _load();
 }
 
 final categoryProvider = StateNotifierProvider<CategoryNotifier, CategoryState>((ref) {

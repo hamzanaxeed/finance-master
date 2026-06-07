@@ -60,9 +60,9 @@ class MoreScreen extends ConsumerWidget {
                     // perform toggle and show result in a SnackBar
                     final msg = await ref.read(biometricProvider.notifier).toggle();
                     if (msg == null) {
-                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
                     } else {
-                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Failed: $msg')));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $msg')));
                     }
                   },
                 );

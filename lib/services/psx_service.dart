@@ -16,7 +16,7 @@ class PSXService {
       if (resp.statusCode != 200) throw Exception('HTTP ${resp.statusCode}');
       final Map<String, dynamic> json = jsonDecode(resp.body) as Map<String, dynamic>;
       final status = json['status'];
-      if (status == null || (status is int && status != 1)) {
+      if (status == null || status.toString() != '1') {
         final msg = (json['message'] as String?) ?? 'Invalid symbol or empty data';
         throw InvalidSymbolException(symbol: s, message: msg);
       }

@@ -6,6 +6,7 @@ import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/providers/account_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../providers/stock_providers.dart';
+import '../../../repositories/stock_repository.dart';
 import '../../../shared/models/portfolio.dart';
 
 class PortfolioScreen extends ConsumerWidget {
@@ -520,11 +521,16 @@ class PortfolioScreen extends ConsumerWidget {
       }
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All shares current price updated')));
     } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('InvalidSymbolsException')) {
-        final parts = msg.split(':');
-        final invalidPart = parts.length > 1 ? parts.sublist(1).join(':') : 'Some symbols';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Some symbols may be invalid: $invalidPart')));
+      if (e is InvalidSymbolsException) {
+        // still apply successful results
+        for (final entry in e.results.entries) {
+          final sym = entry.key;
+          final quote = entry.value;
+          try {
+            ref.read(priceHistoryProvider.notifier).addPricePoint(sym, PricePoint(time: quote.fetchedAt, price: quote.price));
+          } catch (_) {}
+        }
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Updated valid symbols; invalid: ${e.invalidSymbols.join(",")}')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to refresh prices: $e')));
       }

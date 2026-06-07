@@ -66,6 +66,9 @@ class AccountNotifier extends StateNotifier<List<Account>> {
       // ignore and keep empty state
     }
   }
+
+  // Public reload helper used after importing backups
+  Future<void> reload() async => _loadAccounts();
 }
 
 final accountProvider =
