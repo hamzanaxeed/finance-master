@@ -21,6 +21,7 @@ import '../../features/more/screens/passwords_screen.dart';
 import 'package:wealthtracker/features/more/screens/manage_categories_screen.dart';
 import '../../shared/widgets/bottom_navigation.dart';
 import '../../features/portfolio/screens/portfolio_holding_detail_screen.dart';
+import '../../features/more/screens/backup_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -54,6 +55,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/more',
             builder: (context, state) => const MoreScreen(),
+          ),
+          GoRoute(
+            path: '/more/backup',
+            builder: (context, state) => const BackupScreen(),
           ),
           GoRoute(
             path: '/more/notes',

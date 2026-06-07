@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/storage/storage_utils.dart';
 import 'dart:convert';
 import '../models/note.dart';
 
@@ -26,14 +27,12 @@ class NotesNotifier extends StateNotifier<List<NoteItem>> {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((n) => n.toJson()).toList();
-    await prefs.setString(_key, jsonEncode(jsonList));
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(jsonList));
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;

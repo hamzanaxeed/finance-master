@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/storage/storage_utils.dart';
 
 /// Tracks whether the app session is currently unlocked. App sets this on successful auth.
 final sessionUnlockedProvider = StateProvider<bool>((ref) => true);
@@ -18,8 +19,8 @@ class BiometricNotifier extends StateNotifier<bool> {
 
   Future<void> _load() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      state = prefs.getBool(_key) ?? false;
+      final v = await StorageUtils.safeLoadPrefsBool(_key);
+      state = v ?? false;
     } catch (_) {
       state = false;
     }
@@ -75,7 +76,6 @@ class BiometricNotifier extends StateNotifier<bool> {
   /// Toggle biometric on/off.
   /// Returns null on success, or an error message on failure.
   Future<String?> toggle() async {
-    final prefs = await SharedPreferences.getInstance();
     if (!state) {
       // enabling -> ensure device supports biometrics and authenticate first
       final supported = await isDeviceSupported();
@@ -91,7 +91,7 @@ class BiometricNotifier extends StateNotifier<bool> {
           if (_lastAuthError != null && _lastAuthError!.isNotEmpty) return 'Authentication failed: ${_lastAuthError!}';
           return 'Authentication failed';
         }
-        await prefs.setBool(_key, true);
+        await StorageUtils.safeSavePrefsBool(_key, true);
         state = true;
         return null;
       } catch (e) {
@@ -100,7 +100,7 @@ class BiometricNotifier extends StateNotifier<bool> {
     } else {
       // disabling
       try {
-        await prefs.setBool(_key, false);
+        await StorageUtils.safeSavePrefsBool(_key, false);
         state = false;
         return null;
       } catch (e) {

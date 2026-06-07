@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import '../models/password_entry.dart';
+import '../../core/storage/storage_utils.dart';
 
 class PasswordsNotifier extends StateNotifier<List<PasswordEntry>> {
   static const _key = 'password_entries';
@@ -29,11 +30,11 @@ class PasswordsNotifier extends StateNotifier<List<PasswordEntry>> {
 
   Future<void> _save() async {
     final jsonList = state.map((e) => e.toJson()).toList();
-    await _secure.write(key: _key, value: jsonEncode(jsonList));
+    await StorageUtils.safeSaveSecureString(_key, jsonEncode(jsonList));
   }
 
   Future<void> _load() async {
-    final raw = await _secure.read(key: _key);
+    final raw = await StorageUtils.safeLoadSecureString(_key);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;

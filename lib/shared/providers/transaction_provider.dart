@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/transaction.dart';
+import '../../core/storage/storage_utils.dart';
 
 class TransactionNotifier extends StateNotifier<List<Transaction>> {
   TransactionNotifier() : super([]) {
@@ -43,14 +43,12 @@ class TransactionNotifier extends StateNotifier<List<Transaction>> {
   static const String _prefsKey = 'transactions';
 
   Future<void> _saveTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((t) => t.toJson()).toList();
-    await prefs.setString(_prefsKey, jsonEncode(jsonList));
+    await StorageUtils.safeSavePrefsString(_prefsKey, jsonEncode(jsonList));
   }
 
   Future<void> _loadTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_prefsKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_prefsKey);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
@@ -121,13 +119,11 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefsKey, jsonEncode(state.toJson()));
+    await StorageUtils.safeSavePrefsString(_prefsKey, jsonEncode(state.toJson()));
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_prefsKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_prefsKey);
     if (raw == null) return;
     try {
       final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
@@ -168,4 +164,3 @@ final monthlyExpenseProvider = Provider<double>((ref) {
       })
       .fold(0.0, (sum, txn) => sum + txn.amount);
 });
-

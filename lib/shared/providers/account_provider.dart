@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/account.dart';
+import '../../core/storage/storage_utils.dart';
 
 class AccountNotifier extends StateNotifier<List<Account>> {
   AccountNotifier() : super([]) {
@@ -51,14 +51,13 @@ class AccountNotifier extends StateNotifier<List<Account>> {
   static const String _prefsKey = 'accounts';
 
   Future<void> _saveAccounts() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((a) => a.toJson()).toList();
-    await prefs.setString(_prefsKey, jsonEncode(jsonList));
+    // use safe save with backup
+    await StorageUtils.safeSavePrefsString(_prefsKey, jsonEncode(jsonList));
   }
 
   Future<void> _loadAccounts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_prefsKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_prefsKey);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;

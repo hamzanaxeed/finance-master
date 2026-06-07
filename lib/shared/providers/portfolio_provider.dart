@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/storage/storage_utils.dart';
 import 'dart:convert';
 import '../models/portfolio.dart';
 import '../models/transaction.dart';
@@ -46,14 +46,12 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
   static const String _stockKey = 'stock_transactions';
 
   Future<void> _saveStockTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((s) => s.toJson()).toList();
-    await prefs.setString(_stockKey, jsonEncode(jsonList));
+    await StorageUtils.safeSavePrefsString(_stockKey, jsonEncode(jsonList));
   }
 
   Future<void> _loadStockTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_stockKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_stockKey);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
@@ -90,14 +88,12 @@ class DividendNotifier extends StateNotifier<List<Dividend>> {
   static const String _dividendKey = 'dividends';
 
   Future<void> _saveDividends() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((d) => d.toJson()).toList();
-    await prefs.setString(_dividendKey, jsonEncode(jsonList));
+    await StorageUtils.safeSavePrefsString(_dividendKey, jsonEncode(jsonList));
   }
 
   Future<void> _loadDividends() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_dividendKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_dividendKey);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
@@ -125,14 +121,12 @@ class CorporateActionNotifier extends StateNotifier<List<CorporateAction>> {
   static const String _actionsKey = 'corporate_actions';
 
   Future<void> _saveActions() async {
-    final prefs = await SharedPreferences.getInstance();
     final jsonList = state.map((a) => a.toJson()).toList();
-    await prefs.setString(_actionsKey, jsonEncode(jsonList));
+    await StorageUtils.safeSavePrefsString(_actionsKey, jsonEncode(jsonList));
   }
 
   Future<void> _loadActions() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_actionsKey);
+    final raw = await StorageUtils.safeLoadPrefsString(_actionsKey);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
@@ -253,14 +247,12 @@ class PriceHistoryNotifier extends StateNotifier<Map<String, List<PricePoint>>> 
   List<PricePoint> getHistory(String symbol) => state[symbol] ?? [];
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
     final map = state.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()));
-    await prefs.setString(_key, jsonEncode(map));
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(map));
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
     if (raw == null) return;
     try {
       final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
@@ -302,13 +294,11 @@ class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key, jsonEncode(state));
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(state));
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
     if (raw == null) return;
     try {
       final Map<String, dynamic> decoded = jsonDecode(raw) as Map<String, dynamic>;
@@ -350,13 +340,11 @@ class PortfolioCashNotifier extends StateNotifier<double> {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(_key, state);
+    await StorageUtils.safeSavePrefsDouble(_key, state);
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final v = prefs.getDouble(_key);
+    final v = await StorageUtils.safeLoadPrefsDouble(_key);
     if (v != null) state = v;
   }
 }
@@ -415,14 +403,12 @@ class PortfolioTransferNotifier extends StateNotifier<List<PortfolioTransfer>> {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
     final list = state.map((t) => t.toJson()).toList();
-    await prefs.setString(_key, jsonEncode(list));
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(list));
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key);
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
     if (raw == null) return;
     try {
       final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;

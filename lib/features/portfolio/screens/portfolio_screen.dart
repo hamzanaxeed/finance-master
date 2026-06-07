@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../shared/providers/portfolio_provider.dart';
 import '../../../shared/providers/account_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../providers/stock_providers.dart';
+import '../../../shared/models/portfolio.dart';
 
 class PortfolioScreen extends ConsumerWidget {
   const PortfolioScreen({super.key});
@@ -21,7 +23,7 @@ class PortfolioScreen extends ConsumerWidget {
     // Total portfolio value = cash + holdings current value
     final totalValue = ref.watch(portfolioTotalValueProvider);
 
-    // Invested = net external transfers into portfolio (transfers in - transfers out)
+    // nl = net external transfers into portfolio (transfers in - transfers out)
     final invested = ref.watch(portfolioTotalInvestedProvider);
 
     // Profit/Loss calculated against invested (net transfers)
@@ -41,12 +43,15 @@ class PortfolioScreen extends ConsumerWidget {
                 _showTransferDialog(context, ref);
               } else if (value == 'manage_cash') {
                 _showManageCashDialog(context, ref);
+              } else if (value == 'refresh_prices') {
+                _refreshAllPrices(context, ref);
               }
             },
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'transactions', child: Text('Transactions')),
               PopupMenuItem(value: 'transfer', child: Text('Transfer')),
               PopupMenuItem(value: 'manage_cash', child: Text('Manage cash')),
+              PopupMenuItem(value: 'refresh_prices', child: Text('Refresh Prices')),
             ],
           ),
         ],
@@ -493,6 +498,37 @@ class PortfolioScreen extends ConsumerWidget {
         );
       },
     );
+  }
+
+  Future<void> _refreshAllPrices(BuildContext context, WidgetRef ref) async {
+    final holdings = ref.read(holdingsProvider);
+    if (holdings.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No holdings to refresh')));
+      return;
+    }
+    final symbols = holdings.map((h) => h.symbol).toSet().toList();
+    final repo = ref.read(stockRepositoryProvider);
+    try {
+      final results = await repo.fetchSymbols(symbols);
+      // update price history for each symbol with a new PricePoint
+      for (final entry in results.entries) {
+        final sym = entry.key;
+        final quote = entry.value;
+        try {
+          ref.read(priceHistoryProvider.notifier).addPricePoint(sym, PricePoint(time: quote.fetchedAt, price: quote.price));
+        } catch (_) {}
+      }
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All shares current price updated')));
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('InvalidSymbolsException')) {
+        final parts = msg.split(':');
+        final invalidPart = parts.length > 1 ? parts.sublist(1).join(':') : 'Some symbols';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Some symbols may be invalid: $invalidPart')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to refresh prices: $e')));
+      }
+    }
   }
 }
 Widget _summaryCard(

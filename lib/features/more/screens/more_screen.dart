@@ -79,6 +79,15 @@ class MoreScreen extends ConsumerWidget {
               onTap: () => context.go('/manage-categories'),
             ),
           ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.backup),
+              title: const Text('Backup & Restore'),
+              subtitle: const Text('Export or import encrypted backup'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/more/backup'),
+            ),
+          ),
         ],
       ),
     );

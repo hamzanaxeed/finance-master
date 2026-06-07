@@ -97,52 +97,52 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     final router = ref.watch(routerProvider);
     final isDarkMode = ref.watch(darkModeProvider);
 
-    if (!_authChecked) {
-      return const MaterialApp(debugShowCheckedModeBanner: false, home: Scaffold(body: Center(child: CircularProgressIndicator())));
-    }
-    if (!_authed) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          appBar: AppBar(title: const Text('Finance Master')),
-          body: Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              const Text('Locked', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              const Text('Authenticate to unlock the app.'),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  if (_authInProgress) return;
-                  final now = DateTime.now();
-                  if (_lastAuthAttempt != null && now.difference(_lastAuthAttempt!).inSeconds < 2) return;
-                  _authInProgress = true;
-                  _lastAuthAttempt = now;
-                  final ok = await ref.read(biometricProvider.notifier).authenticate();
-                  _authInProgress = false;
-                  if (ok) {
-                    // mark both local and global session unlocked
-                    setState(() => _authed = true);
-                    ref.read(sessionUnlockedProvider.notifier).state = true;
-                  }
-                },
-                icon: const Icon(Icons.fingerprint),
-                label: const Text('Unlock'),
-              ),
-            ]),
-          ),
-        ),
-      );
-    }
-
+    // Always use a single MaterialApp.router and control the displayed content
     return MaterialApp.router(
-      title: 'Finance Master',
+      title: 'WealthTracker',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-
       darkTheme: AppTheme.darkTheme,
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: router,
+      // builder allows us to overlay a loading or locked screen while keeping the app theme/context stable
+      builder: (context, child) {
+        if (!_authChecked) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (!_authed) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Finance Master')),
+            body: Center(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const Text('Locked', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                const Text('Authenticate to unlock the app.'),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_authInProgress) return;
+                    final now = DateTime.now();
+                    if (_lastAuthAttempt != null && now.difference(_lastAuthAttempt!).inSeconds < 2) return;
+                    _authInProgress = true;
+                    _lastAuthAttempt = now;
+                    final ok = await ref.read(biometricProvider.notifier).authenticate();
+                    _authInProgress = false;
+                    if (ok) {
+                      setState(() => _authed = true);
+                      ref.read(sessionUnlockedProvider.notifier).state = true;
+                    }
+                  },
+                  icon: const Icon(Icons.fingerprint),
+                  label: const Text('Unlock'),
+                ),
+              ]),
+            ),
+          );
+        }
+        // Normal app content
+        return child ?? const SizedBox.shrink();
+      },
     );
   }
 }
