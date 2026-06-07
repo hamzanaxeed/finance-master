@@ -49,6 +49,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             onSelected: (value) {
               if (value == 'transactions') {
                 context.push('/portfolio/transactions');
+              } else if (value == 'charges') {
+                context.push('/portfolio/charges');
               } else if (value == 'transfer') {
                 _showTransferDialog(context, ref);
               } else if (value == 'manage_cash') {
@@ -56,9 +58,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               } else if (value == 'refresh_prices') {
                 _refreshAllPrices(context, ref);
               }
+
             },
             itemBuilder: (context) => const [
               PopupMenuItem(value: 'transactions', child: Text('Transactions')),
+              PopupMenuItem(value: 'charges', child: Text('Charges')),
               PopupMenuItem(value: 'transfer', child: Text('Transfer')),
               PopupMenuItem(value: 'manage_cash', child: Text('Manage cash')),
               PopupMenuItem(value: 'refresh_prices', child: Text('Refresh Prices')),
@@ -110,7 +114,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                         Expanded(
                           child: Text(
                             'Holdings P/L: ${holdingsProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(holdingsProfitLoss)} (${holdingsProfitLoss >= 0 ? '+' : ''}${holdingsProfitLossPercent.toStringAsFixed(1)}%)',
-                            style: TextStyle(color: holdingsProfitLoss >= 0 ? Colors.green : Colors.red),
+                            style: TextStyle(color: holdingsProfitLoss >= 0 ? Colors.black : Colors.black),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

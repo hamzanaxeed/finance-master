@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/models/portfolio.dart';
 import 'package:intl/intl.dart';
-import '../../../shared/providers/portfolio_provider.dart';
-import '../../../shared/providers/portfolio_provider.dart' as _pp show holdingMetaProvider;
 import '../../../shared/providers/portfolio_provider.dart' as pp;
 
 class AddStockTransactionScreen extends ConsumerStatefulWidget {
@@ -12,8 +10,10 @@ class AddStockTransactionScreen extends ConsumerStatefulWidget {
   final StockTransactionType? initialType;
   final double? initialPrice;
   final double? initialQuantity;
+  // Optional: pass an existing transaction to edit
+  final StockTransaction? initialTransaction;
 
-  const AddStockTransactionScreen({super.key, this.initialSymbol, this.initialType, this.initialPrice, this.initialQuantity});
+  const AddStockTransactionScreen({super.key, this.initialSymbol, this.initialType, this.initialPrice, this.initialQuantity, this.initialTransaction});
 
   @override
   ConsumerState<AddStockTransactionScreen> createState() => _AddStockTransactionScreenState();
@@ -45,51 +45,100 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
     super.initState();
     // Prefill if initial values were provided
     final w = widget;
-    if (w.initialSymbol != null) _symbolController.text = w.initialSymbol!.toUpperCase();
-    if (w.initialPrice != null) _priceController.text = w.initialPrice!.toStringAsFixed(2);
-    if (w.initialQuantity != null) _quantityController.text = w.initialQuantity!.toStringAsFixed(2);
-    if (w.initialType != null) _selectedType = w.initialType!;
+    // If an existing transaction is provided, use it to prefill all fields (edit mode)
+    if (w.initialTransaction != null) {
+      final t = w.initialTransaction!;
+      _symbolController.text = t.symbol.toUpperCase();
+      // try to prefill company name from holding meta if available
+      final meta = ref.read(pp.holdingMetaProvider);
+      _companyNameController.text = meta[t.symbol] ?? '';
+      // try to fill company name from holding meta if available later; leave blank for now
+      _priceController.text = t.price.toStringAsFixed(2);
+      _quantityController.text = t.quantity.toStringAsFixed(2);
+      _commissionController.text = t.commission.toStringAsFixed(2);
+      _selectedType = t.type;
+      _selectedDate = t.date;
+    } else {
+      if (w.initialSymbol != null) _symbolController.text = w.initialSymbol!.toUpperCase();
+      if (w.initialPrice != null) _priceController.text = w.initialPrice!.toStringAsFixed(2);
+      if (w.initialQuantity != null) _quantityController.text = w.initialQuantity!.toStringAsFixed(2);
+      if (w.initialType != null) _selectedType = w.initialType!;
+    }
   }
 
-  void _handleSubmit() {
-    if (_formKey.currentState!.validate()) {
-      final transaction = StockTransaction(
-        symbol: _symbolController.text.toUpperCase(),
-        type: _selectedType,
-        quantity: double.parse(_quantityController.text),
-        price: double.parse(_priceController.text),
-        commission: double.parse(_commissionController.text),
-        date: _selectedDate,
-      );
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      // Use notifier which now returns a Future<bool> indicating success (insufficient funds when buying)
-      ref.read(stockTransactionProvider.notifier).addTransaction(transaction).then((success) {
-        if (success) {
-          // save company name to holding meta if provided
-          final company = _companyNameController.text.trim();
-          if (company.isNotEmpty) {
-            ref.read(pp.holdingMetaProvider.notifier).updateCompanyName(transaction.symbol, company);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Transaction added successfully')),
+    final isEditing = widget.initialTransaction != null;
+    final newSymbol = _symbolController.text.toUpperCase();
+    final oldSymbol = widget.initialTransaction?.symbol;
+
+    // If editing and symbol changed, confirm with the user before proceeding
+    if (isEditing && oldSymbol != null && oldSymbol != newSymbol) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: const Text('Change symbol?'),
+            content: Text('You changed the stock symbol from "$oldSymbol" to "$newSymbol". This will move the transaction to a different holding. Do you want to proceed?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+              ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Proceed')),
+            ],
           );
-          context.pop();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Insufficient portfolio funds for this buy transaction')),
-          );
+        },
+      );
+      if (confirm != true) return;
+    }
+
+    final txn = StockTransaction(
+      id: isEditing ? widget.initialTransaction!.id : null,
+      symbol: newSymbol,
+      type: _selectedType,
+      quantity: double.parse(_quantityController.text),
+      price: double.parse(_priceController.text),
+      commission: double.parse(_commissionController.text),
+      date: _selectedDate,
+    );
+
+    final notifier = ref.read(pp.stockTransactionProvider.notifier);
+    final success = await (isEditing ? notifier.updateTransaction(txn) : notifier.addTransaction(txn));
+
+    if (success) {
+      // save company name to holding meta if provided
+      final company = _companyNameController.text.trim();
+      if (company.isNotEmpty) {
+        ref.read(pp.holdingMetaProvider.notifier).updateCompanyName(txn.symbol, company);
+      } else if (isEditing && oldSymbol != null && oldSymbol != txn.symbol) {
+        // migrate holdingMeta from oldSymbol to new symbol if available and user didn't provide a new name
+        final meta = ref.read(pp.holdingMetaProvider);
+        final oldName = meta[oldSymbol];
+        final newNameExists = meta[txn.symbol] != null;
+        if (oldName != null && !newNameExists) {
+          ref.read(pp.holdingMetaProvider.notifier).updateCompanyName(txn.symbol, oldName);
+          ref.read(pp.holdingMetaProvider.notifier).removeCompanyName(oldSymbol);
         }
-      });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(isEditing ? 'Transaction updated' : 'Transaction added successfully')),
+      );
+      context.pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Insufficient portfolio funds to save this transaction')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isEditing = widget.initialTransaction != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Stock Transaction'),
+        title: Text(isEditing ? 'Edit Transaction' : 'Add Stock Transaction'),
       ),
       body: Form(
         key: _formKey,
@@ -258,7 +307,7 @@ class _AddStockTransactionScreenState extends ConsumerState<AddStockTransactionS
                           ? theme.colorScheme.onPrimary
                           : theme.colorScheme.onError,
                     ),
-                    child: const Text('Save Order'),
+                    child: Text(isEditing ? 'Save Changes' : 'Save Order'),
                   ),
                 ),
               ],

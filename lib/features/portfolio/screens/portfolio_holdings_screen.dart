@@ -37,13 +37,18 @@ class PortfolioHoldingsScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(holding.symbol, style: Theme.of(context).textTheme.titleLarge),
-                                Text(holding.companyName, style: Theme.of(context).textTheme.bodySmall),
-                              ],
+                            // Make left side flexible so long company names don't push the right side off-screen
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(holding.symbol, style: Theme.of(context).textTheme.titleLarge, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  const SizedBox(height: 2),
+                                  Text(holding.companyName, style: Theme.of(context).textTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 12),
                             // Live price and computed values
                             Consumer(builder: (ctx, ref, _) {
                               final asyncQuote = ref.watch(stockPriceProvider(holding.symbol));

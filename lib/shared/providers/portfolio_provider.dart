@@ -99,6 +99,37 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
     return true;
   }
 
+  /// Update an existing transaction. Returns true on success. Adjusts portfolio cash
+  /// by computing the net delta between the new transaction effect and the old one.
+  Future<bool> updateTransaction(StockTransaction transaction) async {
+    final idx = state.indexWhere((t) => t.id == transaction.id);
+    if (idx == -1) return false;
+
+    final old = state[idx];
+    // compute effect on cash: buy => -total, sell => +total
+    final oldEffect = old.type == StockTransactionType.buy ? -old.total : old.total;
+    final newEffect = transaction.type == StockTransactionType.buy ? -transaction.total : transaction.total;
+    final delta = newEffect - oldEffect;
+
+    final portfolioCashNotifier = ref.read(_portfolioCashProvider.notifier);
+    final currentCash = ref.read(portfolioCashProvider);
+
+    if (delta < 0) {
+      // need to withdraw -delta from cash
+      final need = -delta;
+      if (currentCash < need) return false; // insufficient funds to cover edit
+      portfolioCashNotifier.withdraw(need);
+    } else if (delta > 0) {
+      portfolioCashNotifier.deposit(delta);
+    }
+
+    final newList = List<StockTransaction>.from(state);
+    newList[idx] = transaction;
+    state = newList;
+    await _saveStockTransactions();
+    return true;
+  }
+
   void deleteTransaction(String id) {
     state = state.where((txn) => txn.id != id).toList();
     _saveStockTransactions();
@@ -205,6 +236,13 @@ class HoldingMetaNotifier extends StateNotifier<Map<String, String>> {
   void updateCompanyName(String symbol, String name) {
     final newState = Map<String, String>.from(state);
     newState[symbol] = name;
+    state = newState;
+    _save();
+  }
+
+  void removeCompanyName(String symbol) {
+    final newState = Map<String, String>.from(state);
+    newState.remove(symbol);
     state = newState;
     _save();
   }
@@ -535,3 +573,47 @@ class _HoldingData {
   double get averagePrice => quantity > 0 ? totalInvestment / quantity : 0;
 }
 
+class ChargesNotifier extends StateNotifier<List<Charge>> {
+  ChargesNotifier() : super([]) {
+    _load();
+  }
+
+  static const String _key = 'portfolio_charges';
+
+  void addCharge(Charge c) {
+    state = [...state, c];
+    _save();
+  }
+
+  void deleteCharge(String id) {
+    state = state.where((c) => c.id != id).toList();
+    _save();
+  }
+
+  double get totalCharges => state.fold(0.0, (s, c) => s + c.amount);
+
+  Future<void> _save() async {
+    final jsonList = state.map((c) => c.toJson()).toList();
+    await StorageUtils.safeSavePrefsString(_key, jsonEncode(jsonList));
+  }
+
+  Future<void> _load() async {
+    final raw = await StorageUtils.safeLoadPrefsString(_key);
+    if (raw == null) return;
+    try {
+      final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
+      state = decoded.map((e) => Charge.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (_) {}
+  }
+
+  Future<void> reload() async => _load();
+}
+
+final chargesProvider = StateNotifierProvider<ChargesNotifier, List<Charge>>((ref) {
+  return ChargesNotifier();
+});
+
+final portfolioTotalChargesProvider = Provider<double>((ref) {
+  final charges = ref.watch(chargesProvider);
+  return charges.fold(0.0, (s, c) => s + c.amount);
+});

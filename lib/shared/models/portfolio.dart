@@ -237,3 +237,26 @@ class PortfolioTransfer {
         note: json['note'] as String?,
       );
 }
+
+class Charge {
+  final String id;
+  final double amount; // positive number representing charge amount
+  final String? note;
+  final DateTime date;
+
+  Charge({String? id, required this.amount, this.note, required this.date}) : id = id ?? const Uuid().v4();
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'amount': amount,
+        'note': note,
+        'date': date.toIso8601String(),
+      };
+
+  factory Charge.fromJson(Map<String, dynamic> json) => Charge(
+        id: json['id'] as String?,
+        amount: (json['amount'] as num).toDouble(),
+        note: json['note'] as String?,
+        date: DateTime.parse(json['date'] as String),
+      );
+}

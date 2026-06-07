@@ -13,6 +13,7 @@ import '../../features/portfolio/screens/portfolio_holdings_screen.dart';
 import '../../features/portfolio/screens/add_stock_transaction_screen.dart';
 import '../../features/portfolio/screens/portfolio_transactions_screen.dart';
 import '../../features/portfolio/screens/dividends_screen.dart';
+import '../../features/portfolio/screens/charges_screen.dart';
 import '../../features/analytics/screens/analytics_screen.dart';
 import '../../features/analytics/screens/activity_timeline_screen.dart';
 import '../../features/more/screens/more_screen.dart';
@@ -121,6 +122,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/portfolio/dividends',
         builder: (context, state) => const DividendsScreen(),
+      ),
+      GoRoute(
+        path: '/portfolio/charges',
+        builder: (context, state) => const ChargesScreen(),
       ),
       GoRoute(
         path: '/analytics',
