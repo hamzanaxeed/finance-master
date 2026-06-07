@@ -98,12 +98,13 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     final isDarkMode = ref.watch(darkModeProvider);
 
     if (!_authChecked) {
-      return const MaterialApp(home: Scaffold(body: Center(child: CircularProgressIndicator())));
+      return const MaterialApp(debugShowCheckedModeBanner: false, home: Scaffold(body: Center(child: CircularProgressIndicator())));
     }
     if (!_authed) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
-          appBar: AppBar(title: const Text('WealthTracker')),
+          appBar: AppBar(title: const Text('Finance Master')),
           body: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               const Text('Locked', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -135,7 +136,7 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     }
 
     return MaterialApp.router(
-      title: 'WealthTracker',
+      title: 'Finance Master',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
 

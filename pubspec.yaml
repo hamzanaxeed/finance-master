@@ -29,6 +29,12 @@ dependencies:
   shared_preferences: ^2.1.0
   flutter_secure_storage: ^8.0.0
   local_auth: ^2.2.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+    android: "launcher_icon"
+    ios: true
+    image_path: "assets/images/logo.png"
 
 dev_dependencies:
   flutter_test:

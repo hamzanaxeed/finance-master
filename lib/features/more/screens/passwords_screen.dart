@@ -18,33 +18,11 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
   String _query = '';
   bool _sortAz = true; // true: A-Z by appName, false: Z-A
   bool _showOnlyWithNote = false;
-  bool _authChecked = false;
-  bool _authed = false;
 
   @override
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() async {
-      final enabled = ref.read(biometricProvider);
-      if (!enabled) {
-        setState(() {
-          _authed = true;
-          _authChecked = true;
-        });
-        return;
-      }
-      final ok = await ref.read(biometricProvider.notifier).authenticate();
-      setState(() {
-        _authed = ok;
-        _authChecked = true;
-      });
-    });
   }
 
   List<PasswordEntry> _applyFilters(List<PasswordEntry> src) {
@@ -154,10 +132,10 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
     final entries = ref.watch(passwordsProvider);
     final filtered = _applyFilters(entries);
 
-    if (!_authChecked) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-    if (!_authed) {
+    final biometricEnabled = ref.watch(biometricProvider);
+    final sessionUnlocked = ref.watch(sessionUnlockedProvider);
+
+    if (biometricEnabled && !sessionUnlocked) {
       return Scaffold(
         appBar: AppBar(title: const Text('Passwords')),
         body: Center(
@@ -169,7 +147,12 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
             ElevatedButton.icon(
               onPressed: () async {
                 final ok = await ref.read(biometricProvider.notifier).authenticate();
-                if (ok) setState(() => _authed = true);
+                if (ok) {
+                  ref.read(sessionUnlockedProvider.notifier).state = true;
+                  setState(() {});
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Authentication failed')));
+                }
               },
               icon: const Icon(Icons.fingerprint),
               label: const Text('Unlock'),
