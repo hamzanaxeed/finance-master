@@ -19,14 +19,30 @@ class BackupScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(title),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            obscureText: true,
-            decoration: const InputDecoration(labelText: 'Pass Key'),
-            validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-          ),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            var obscure = true;
+            // Use a controller and formKey defined above; manage obscure via closure
+            return Form(
+              key: formKey,
+              child: TextFormField(
+                controller: controller,
+                obscureText: obscure,
+                decoration: InputDecoration(
+                  labelText: 'Passphrase',
+                  suffixIcon: IconButton(
+                    icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      // Toggle obscure by rebuilding the StatefulBuilder
+                      obscure = !obscure;
+                      setState(() {});
+                    },
+                  ),
+                ),
+                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+              ),
+            );
+          },
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(ctx).pop(null), child: const Text('Cancel')),
