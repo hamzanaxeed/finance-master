@@ -1,20 +1,46 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../storage/storage_utils.dart';
 
 final darkModeProvider = StateNotifierProvider<DarkModeNotifier, bool>((ref) {
   return DarkModeNotifier();
 });
 
 class DarkModeNotifier extends StateNotifier<bool> {
-  DarkModeNotifier() : super(false);
+  static const _key = 'dark_mode_enabled';
+  final Completer<void> _initCompleter = Completer<void>();
+
+  DarkModeNotifier() : super(false) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final v = await StorageUtils.safeLoadPrefsBool(_key);
+      state = v ?? false;
+    } catch (_) {
+      state = false;
+    }
+    if (!_initCompleter.isCompleted) _initCompleter.complete();
+  }
+
+  // Public reload helper
+  Future<void> reload() async => _load();
+
+  // Wait until provider has loaded stored preference
+  Future<void> ensureInitialized() => _initCompleter.future;
 
   void toggle() {
     state = !state;
+    // persist new value (fire-and-forget)
+    StorageUtils.safeSavePrefsBool(_key, state);
   }
 
   void setDarkMode(bool value) {
     state = value;
+    StorageUtils.safeSavePrefsBool(_key, state);
   }
 }
 

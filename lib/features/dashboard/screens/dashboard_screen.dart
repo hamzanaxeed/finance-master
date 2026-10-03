@@ -103,13 +103,19 @@ class DashboardScreen extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Recent Transactions',
-                          style: Theme.of(context).textTheme.titleMedium,
+                        // Constrain title to avoid overflow and allow theme-driven style changes
+                        Expanded(
+                          child: Text(
+                            'Recent Transactions',
+                            style: Theme.of(context).textTheme.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
+                        // Keep button non-const so it uses current theme text style safely
                         TextButton(
                           onPressed: () => context.push('/transactions'),
-                          child: const Text('View all'),
+                          child: Text('View all', style: Theme.of(context).textTheme.labelLarge),
                         ),
                       ],
                     ),

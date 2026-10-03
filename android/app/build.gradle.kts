@@ -13,7 +13,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
 
-        // ADD THIS
+        // Correctly tells compiler to desugar modern time/date APIs for older devices
         isCoreLibraryDesugaringEnabled = true
     }
 
@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId = "com.example.cursor_bhai"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34 // Upgraded to match Google Play modern target baseline
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -32,13 +32,17 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+
+            // Ensure these two lines are present inside your release block
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
 
-// ADD THIS WHOLE BLOCK
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // Upgraded slightly to the most optimal 2.1.x patch release
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 
 flutter {

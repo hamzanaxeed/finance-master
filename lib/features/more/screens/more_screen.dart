@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../shared/providers/auth_provider.dart';
 
 class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
@@ -12,6 +13,8 @@ class MoreScreen extends ConsumerWidget {
 
     final features = [
       {'title': 'Transactions', 'icon': Icons.swap_horiz, 'route': '/transactions'},
+      {'title': 'Notes', 'icon': Icons.note_alt_outlined, 'route': '/more/notes'},
+      {'title': 'Passwords', 'icon': Icons.lock_outline, 'route': '/more/passwords'},
       {'title': 'Analytics Center', 'icon': Icons.analytics, 'route': '/analytics'},
       {'title': 'Activity Timeline', 'icon': Icons.timeline, 'route': '/activity'},
       {'title': 'Holdings', 'icon': Icons.show_chart, 'route': '/portfolio/holdings'},
@@ -46,13 +49,29 @@ class MoreScreen extends ConsumerWidget {
             ),
           ),
           Card(
-            child: ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('About'),
-              subtitle: const Text('WealthTracker v1.0.0'),
-              trailing: const Icon(Icons.chevron_right),
+            child: Consumer(
+              builder: (ctx, ref, _) {
+                final enabled = ref.watch(biometricProvider);
+                return SwitchListTile(
+                  title: const Text('Biometric lock'),
+                  secondary: const Icon(Icons.fingerprint),
+                  value: enabled,
+                  onChanged: (val) async {
+                    // Capture messenger synchronously to avoid looking up ancestor after await
+                    final messenger = ScaffoldMessenger.of(context);
+                    // perform toggle and show result in a SnackBar
+                    final msg = await ref.read(biometricProvider.notifier).toggle();
+                    if (msg == null) {
+                      messenger.showSnackBar(SnackBar(content: Text(val ? 'Biometric enabled' : 'Biometric disabled')));
+                    } else {
+                      messenger.showSnackBar(SnackBar(content: Text('Failed: $msg')));
+                    }
+                  },
+                );
+              },
             ),
           ),
+
           Card(
             child: ListTile(
               leading: const Icon(Icons.category),
@@ -60,6 +79,15 @@ class MoreScreen extends ConsumerWidget {
               subtitle: const Text('Add or remove transaction categories'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/manage-categories'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.backup),
+              title: const Text('Backup & Restore'),
+              subtitle: const Text('Export or import encrypted backup'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go('/more/backup'),
             ),
           ),
         ],

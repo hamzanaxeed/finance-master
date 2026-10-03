@@ -15,7 +15,7 @@ class HoldingDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final holdings = ref.watch(holdingsProvider);
-    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 2);
+    final currencyFormat = NumberFormat.currency(symbol: 'Rs ', decimalDigits: 1);
 
     StockHolding? holding;
     try {
@@ -75,29 +75,30 @@ class HoldingDetailScreen extends ConsumerWidget {
                 return;
               }
               if (value == 'copy data') {
-                final txt = '${sh.companyName} (${sh.symbol}) - ${sh.quantity} @ Rs ${sh.averagePrice.toStringAsFixed(2)}, current price Rs ${latestPrice.toStringAsFixed(2)}, Total P/L ${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(2)}%';
+                final txt = '${sh.companyName} (${sh.symbol}) - ${sh.quantity} @ Rs ${sh.averagePrice.toStringAsFixed(1)}, current price Rs ${latestPrice.toStringAsFixed(1)}, Total P/L ${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(1)}%';
                 await Clipboard.setData(ClipboardData(text: txt));
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share text copied to clipboard')));
               } else if (value == 'edit') {
-                final controller = TextEditingController(text: sh.companyName);
-                final res = await showDialog<String?>(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Edit Share'),
-                      content: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(labelText: 'Company name'),
-                      ),
-                      actions: [
-                        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-                        ElevatedButton(onPressed: () => Navigator.pop(context, controller.text.trim()), child: const Text('Save')),
-                      ],
-                    );
-                  },
-                );
-                if (res != null && res.isNotEmpty) {
-                  ref.read(holdingMetaProvider.notifier).updateCompanyName(symbol, res);
+                // Open the transaction edit screen so user can modify company name, symbol, price, commission, quantity.
+                // Prefer editing the most recent BUY transaction; fall back to the last transaction if no buy exists.
+                final allTxns = transactions;
+                StockTransaction? txnToEdit;
+                try {
+                  txnToEdit = allTxns.lastWhere((t) => t.type == StockTransactionType.buy);
+                } catch (_) {
+                  if (allTxns.isNotEmpty) txnToEdit = allTxns.last;
+                }
+
+                if (txnToEdit != null) {
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => AddStockTransactionScreen(initialTransaction: txnToEdit)));
+                } else {
+                  // No transactions exist for this holding — open add screen prefilled with symbol and latest price/quantity
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => AddStockTransactionScreen(
+                        initialSymbol: sh.symbol,
+                        initialPrice: latestPrice,
+                        initialQuantity: sh.quantity,
+
+                      )));
                 }
               } else if (value == 'buy' || value == 'sell') {
                 final type = value == 'buy' ? StockTransactionType.buy : StockTransactionType.sell;
@@ -146,9 +147,9 @@ class HoldingDetailScreen extends ConsumerWidget {
                   // Compute the delta to apply to portfolio so the final cash effect equals desiredCashEffect
                   final double delta = desiredCashEffect - originalNet;
                   if (delta > 0) {
-                    await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(2)}');
+                    await ref.read(portfolioTransferProvider.notifier).depositToPortfolio(delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(1)}');
                   } else if (delta < 0) {
-                    await ref.read(portfolioTransferProvider.notifier).withdrawFromPortfolio(-delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(2)}');
+                    await ref.read(portfolioTransferProvider.notifier).withdrawFromPortfolio(-delta, note: 'Reversal for deleted holding ${sh.symbol} at current price Rs ${latestPrice.toStringAsFixed(1)}');
                   }
                 }
 
@@ -197,7 +198,7 @@ class HoldingDetailScreen extends ConsumerWidget {
                     _InfoRow('Total Investment', currencyFormat.format(sh.totalInvestment)),
                     _InfoRow('Current Value', currencyFormat.format(displayCurrentValue)),
                     _InfoRow('Profit/Loss', '${displayProfitLoss >= 0 ? '+' : ''}${currencyFormat.format(displayProfitLoss)}', valueColor: isPositive ? Colors.green : Colors.red),
-                    _InfoRow('Profit/Loss %', '${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(2)}%', valueColor: isPositive ? Colors.green : Colors.red),
+                    _InfoRow('Profit/Loss %', '${displayProfitLossPercent >= 0 ? '+' : ''}${displayProfitLossPercent.toStringAsFixed(1)}%', valueColor: isPositive ? Colors.green : Colors.red),
                   ],
                 ),
               ),
@@ -217,7 +218,7 @@ class HoldingDetailScreen extends ConsumerWidget {
             Align(
               alignment: Alignment.centerRight,
               child: OutlinedButton.icon(
-                icon: const Icon(Icons.currency_rupee),
+
                 label: const Text('Update current price'),
                 onPressed: () async {
                   final controller = TextEditingController();
@@ -261,9 +262,13 @@ class HoldingDetailScreen extends ConsumerWidget {
                       return Card(
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
-                          title: Text('${t.type.name.toUpperCase()} ${t.quantity} @ Rs ${t.price.toStringAsFixed(2)}'),
+                          onTap: () async {
+                            // Open add/edit transaction screen with this transaction for editing
+                            await Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => AddStockTransactionScreen(initialTransaction: t)));
+                          },
+                          title: Text('${t.type.name.toUpperCase()} ${t.quantity} @ Rs ${t.price.toStringAsFixed(1)}'),
                           subtitle: Text(DateFormat.yMMMd().format(t.date)),
-                          trailing: Text('Rs ${t.total.toStringAsFixed(2)}'),
+                          trailing: Text('Rs ${t.total.toStringAsFixed(1)}'),
                         ),
                       );
                     }).toList(),
@@ -274,9 +279,10 @@ class HoldingDetailScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Dividends', style: Theme.of(context).textTheme.titleMedium),
-                Text('Total: Rs ${totalDividendsForHolding.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
+                Text('Total: Rs ${totalDividendsForHolding.toStringAsFixed(1)}', style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
+
             const SizedBox(height: 8),
             dividends.isEmpty
                 ? const Text('No dividends for this holding')
@@ -294,7 +300,7 @@ class HoldingDetailScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(year.toString(), style: Theme.of(context).textTheme.bodyLarge),
-                                Text('Year total: Rs ${yearTotal.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
+                                Text('Year total: Rs ${yearTotal.toStringAsFixed(1)}', style: Theme.of(context).textTheme.bodyMedium),
                               ],
                             ),
                           ),
@@ -307,8 +313,8 @@ class HoldingDetailScreen extends ConsumerWidget {
                                   child: Icon(Icons.monetization_on, color: Colors.white),
                                 ),
                                 title: Text('${d.companyName} (${d.symbol})'),
-                                subtitle: Text('Rs ${d.amountPerShare.toStringAsFixed(2)} per share\n${DateFormat.yMMMd().format(d.date)}'),
-                                trailing: Text('${d.totalReceived.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                                subtitle: Text('Rs ${d.amountPerShare.toStringAsFixed(1)} per share\n${DateFormat.yMMMd().format(d.date)}'),
+                                trailing: Text('${d.totalReceived.toStringAsFixed(1)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                                 isThreeLine: true,
                               ),
                             );
