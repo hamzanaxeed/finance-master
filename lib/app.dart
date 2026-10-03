@@ -63,7 +63,6 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Lock the app when backgrounded and require biometric on resume
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       // Only lock the app when biometrics are enabled. If the user has not
       // enabled biometrics we should not force a lock on background/foreground.
@@ -100,7 +99,6 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
@@ -155,3 +153,4 @@ class _WealthTrackerAppState extends ConsumerState<WealthTrackerApp> with Widget
     );
   }
 }
+    // Lock the app when backgrounded and require biometric on resume

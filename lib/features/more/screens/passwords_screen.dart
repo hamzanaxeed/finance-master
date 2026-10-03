@@ -18,11 +18,5769 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
   String _query = '';
   bool _sortAz = true; // true: A-Z by appName, false: Z-A
   bool _showOnlyWithNote = false;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
 
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+                if (ok) setState(() => _authed = true);
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        setState(() {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+                if (ok) setState(() => _authed = true);
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+                if (ok) setState(() => _authed = true);
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  bool _authed = false;
+  bool _authChecked = false;
+  bool _authed = false;
+  bool _authChecked = false;
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+                if (ok) setState(() => _authed = true);
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+  bool _authChecked = false;
+  bool _authed = false;
+
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        });
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
   @override
   void dispose() {
     _searchCtrl.dispose();
     super.dispose();
+  @override
+  void initState() {
+    super.initState();
+                if (ok) setState(() => _authed = true);
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
+  }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final enabled = ref.read(biometricProvider);
+      if (!enabled) {
+        setState(() {
+          _authed = true;
+          _authChecked = true;
+        });
+        return;
+      }
+      final ok = await ref.read(biometricProvider.notifier).authenticate();
+      setState(() {
+        _authed = ok;
+        _authChecked = true;
+      });
+    });
   }
 
   List<PasswordEntry> _applyFilters(List<PasswordEntry> src) {
@@ -44,27 +5802,17 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
       builder: (ctx) {
         return StatefulBuilder(builder: (ctx, setState) {
           return SingleChildScrollView(
-            padding: MediaQuery.of(ctx).viewInsets.add(const EdgeInsets.all(16)),
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              ListTile(
-                title: Text(e.appName, style: Theme.of(context).textTheme.titleLarge),
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
                 subtitle: Text(e.email.isNotEmpty ? e.email : e.username),
                 trailing: IconButton(
                   icon: const Icon(Icons.copy),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: e.email.isNotEmpty ? e.email : e.username));
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Copied')));
-                  },
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(children: [Text('Password:', style: Theme.of(context).textTheme.bodyLarge), const SizedBox(width: 8), Expanded(child: Text(obscure ? '••••••••' : e.password, style: const TextStyle(fontWeight: FontWeight.bold)))]),
-              const SizedBox(height: 8),
-              // Actions: wrap buttons to multiple lines if needed, show delete aligned to the right below
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                if (ok) setState(() => _authed = true);
                 children: [
                   FilledButton.icon(
                     onPressed: () {
@@ -103,15 +5851,10 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
                   child: TextButton(
                     onPressed: () async {
                       final confirmed = await showDialog<bool?>(context: context, builder: (dctx) => AlertDialog(title: const Text('Delete'), content: const Text('Delete this entry?'), actions: [TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Delete'))]));
-                      if (confirmed == true) {
-                        await ref.read(passwordsProvider.notifier).delete(e.id);
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Entry deleted')));
-                      }
-                    },
-                    child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                  ),
-                ),
+                if (ok) setState(() => _authed = true);
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
               ),
               const SizedBox(height: 12),
               if (e.note != null && e.note!.isNotEmpty) ...[
@@ -132,10 +5875,10 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
     final entries = ref.watch(passwordsProvider);
     final filtered = _applyFilters(entries);
 
-    final biometricEnabled = ref.watch(biometricProvider);
-    final sessionUnlocked = ref.watch(sessionUnlockedProvider);
-
-    if (biometricEnabled && !sessionUnlocked) {
+    if (!_authChecked) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (!_authed) {
       return Scaffold(
         appBar: AppBar(title: const Text('Passwords')),
         body: Center(
@@ -147,12 +5890,7 @@ class _PasswordsScreenState extends ConsumerState<PasswordsScreen> {
             ElevatedButton.icon(
               onPressed: () async {
                 final ok = await ref.read(biometricProvider.notifier).authenticate();
-                if (ok) {
-                  ref.read(sessionUnlockedProvider.notifier).state = true;
-                  setState(() {});
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Authentication failed')));
-                }
+                if (ok) setState(() => _authed = true);
               },
               icon: const Icon(Icons.fingerprint),
               label: const Text('Unlock'),

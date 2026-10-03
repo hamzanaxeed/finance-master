@@ -5,6 +5,7 @@ import '../models/portfolio.dart';
 import '../models/transaction.dart';
 import 'account_provider.dart';
 import 'transaction_provider.dart';
+import 'package:flutter/material.dart';
 
 
 // ---------------- Portfolio cash and transfers (moved up) ----------------
@@ -91,7 +92,11 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
       portfolioCashNotifier.withdraw(transaction.total);
     } else {
       // sell: add to portfolio cash
+      debugPrint('Selling stock: ${transaction.symbol}, Quantity: ${transaction.quantity}, Total: ${transaction.total}');
+      debugPrint('Initial Cash: $currentCash');
       portfolioCashNotifier.deposit(transaction.total);
+      final updatedCash = ref.read(portfolioCashProvider);
+      debugPrint('Updated Cash: $updatedCash');
     }
 
     state = [...state, transaction];
@@ -119,13 +124,15 @@ class StockTransactionNotifier extends StateNotifier<List<StockTransaction>> {
       final need = -delta;
       if (currentCash < need) return false; // insufficient funds to cover edit
       portfolioCashNotifier.withdraw(need);
-    } else if (delta > 0) {
+    } else {
+      debugPrint('Updating transaction for stock: ${transaction.symbol}, Quantity: ${transaction.quantity}, Total: ${transaction.total}');
+      debugPrint('Initial Cash: $currentCash');
       portfolioCashNotifier.deposit(delta);
+      final updatedCash = ref.read(portfolioCashProvider);
+      debugPrint('Updated Cash: $updatedCash');
     }
 
-    final newList = List<StockTransaction>.from(state);
-    newList[idx] = transaction;
-    state = newList;
+    state[idx] = transaction;
     await _saveStockTransactions();
     return true;
   }
@@ -376,8 +383,9 @@ final holdingsProvider = Provider<List<StockHolding>>((ref) {
       // initialize/update market price to the transaction price when buying
       holding.lastPrice = txn.price;
     } else {
+      double avg=holding.averagePrice;
       holding.quantity -= txn.quantity;
-      holding.totalInvestment -= (txn.quantity * holding.averagePrice);
+      holding.totalInvestment -= (txn.quantity * avg);
     }
   }
 
